@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>光大国际 智慧环卫一体化管理平台登陆</title>
+    <link rel="stylesheet" href="css/login.css" type="text/css" charset="UTF-8" />
+    <script src="images/jquery.min.js"></script>
+</head>
+<body>
+<div class="dowebok">
+    <div class="logo"></div>
+    <form action="/user/form" method="post">
+    <div class="form-item">
+        <input id="username" type="text"  name="username" placeholder="账户"/>
+    </div>
+    <div class="form-item">
+        <input id="password" type="password" name="password"  placeholder="密码"/>
+    </div>
+    <div class="form-item"><button type="submit"  name="submit" id="submit">登 录</button></div>
+    </form>
+</div>
+<script>
+    $(function () {
+        $('input').val('')
+    })
+</script>
+
+<div style="text-align:center;">
+</div>
+
+</body>
+</html>
