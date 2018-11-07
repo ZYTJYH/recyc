@@ -1,0 +1,21 @@
+CREATE TABLE Positions
+(
+id int PRIMARY key auto_increment,
+employee_id char(10) not null,
+time datetime not null,
+longitude double not null,
+latitude double not null,
+work_status varchar(32) not null,
+boss_id char(10) not null,
+information text not null
+) default charset=utf8;
+
+
+CREATE TABLE Bosses
+(
+id int PRIMARY key auto_increment,
+boss_id char(10) not null,
+name varchar(20) not null,
+phone varchar(11) not null
+) default charset=utf8;
+

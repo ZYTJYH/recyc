@@ -1,15 +1,18 @@
 package com.zkjc.recyc.entity;
 
 import com.zkjc.recyc.enums.EmployeeStatusEnum;
+import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class PositionEntity {
+
+public class PositionEntity implements Serializable {
     private String employeeId;
     private Date time;
     private double longitude;
     private double latitude;
-    private EmployeeStatusEnum status;
+    private EmployeeStatusEnum workStatus;
     private String bossId;
     private String information;
 
@@ -21,12 +24,12 @@ public class PositionEntity {
         this.employeeId = employeeId;
     }
 
-    public EmployeeStatusEnum getStatus() {
-        return status;
+    public EmployeeStatusEnum getWorkStatus() {
+        return workStatus;
     }
 
-    public void setStatus(EmployeeStatusEnum status) {
-        this.status = status;
+    public void setStatus(EmployeeStatusEnum workStatus) {
+        this.workStatus = workStatus;
     }
 
     public String getBossId() {

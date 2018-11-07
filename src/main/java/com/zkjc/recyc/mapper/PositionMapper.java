@@ -4,21 +4,23 @@ import com.zkjc.recyc.entity.PositionEntity;
 import com.zkjc.recyc.entity.UserEntity;
 import com.zkjc.recyc.enums.EmployeeStatusEnum;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+
 
 public interface PositionMapper {
 
 
 
-    @Select("SELECT * FROM position WHERE status=1")
+    @Select("SELECT * FROM positions WHERE work_status='on'")
     @Results({
             @Result(property = "employeeId",  column = "employee_id"),
             @Result(property = "time", column = "time"),
             @Result(property = "longitude", column = "longitude"),
             @Result(property = "latitude", column = "latitude"),
-            @Result(property = "status", column = "status",javaType = EmployeeStatusEnum.class),
+            @Result(property = "workStatus", column = "work_status",javaType = EmployeeStatusEnum.class),
             @Result(property = "bossId", column = "boss"),
             @Result(property = "time", column = "time")
     })
