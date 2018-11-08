@@ -1,6 +1,8 @@
 package com.zkjc.recyc.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.zkjc.recyc.enums.EmployeeKindEnum;
 import com.zkjc.recyc.enums.EmployeeStatusEnum;
 import org.springframework.stereotype.Component;
 
@@ -11,16 +13,15 @@ import java.util.Date;
 public class PositionEntity implements Serializable {
     private String employeeId;
     private Date time;
+
     private double longitude;
     private double latitude;
     private EmployeeStatusEnum workStatus;
     private String bossId;
     private String information;
+    private EmployeeKindEnum kind;
 
-    public PositionEntity(){
-
-    }
-    public PositionEntity(String employeeId, Date time, double longitude, double latitude, EmployeeStatusEnum workStatus, String bossId, String information) {
+    public PositionEntity(String employeeId, Date time, double longitude, double latitude, EmployeeStatusEnum workStatus, String bossId, String information, EmployeeKindEnum kind) {
         this.employeeId = employeeId;
         this.time = time;
         this.longitude = longitude;
@@ -28,7 +29,13 @@ public class PositionEntity implements Serializable {
         this.workStatus = workStatus;
         this.bossId = bossId;
         this.information = information;
+        this.kind = kind;
     }
+
+    public PositionEntity(){
+
+    }
+
 
     public String getEmployeeId() {
         return employeeId;
@@ -67,6 +74,7 @@ public class PositionEntity implements Serializable {
     }
 
     public void setTime(Date time) {
+
         this.time = time;
     }
 

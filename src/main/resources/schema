@@ -7,7 +7,8 @@ longitude double not null,
 latitude double not null,
 work_status varchar(32) not null,
 boss_id char(10) not null,
-information text not null
+information text not null,
+kind varchar(32) not null
 ) default charset=utf8;
 
 

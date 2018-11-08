@@ -53,6 +53,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userService()).passwordEncoder(new EmptyPasswordEncoder());
 //        auth.inMemoryAuthentication().passwordEncoder(new EmptyPasswordEncoder()).withUser("root1").password("123456").roles("USER");
     }
+
+
     /**
      * 设置用户密码的加密方式为不加密
      */
