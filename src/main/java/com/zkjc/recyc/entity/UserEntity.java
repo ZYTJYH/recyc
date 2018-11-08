@@ -19,10 +19,6 @@ public class UserEntity implements UserDetails {
     private String password;
 
 
-
-
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> auths = new ArrayList<>();
@@ -39,6 +35,16 @@ public class UserEntity implements UserDetails {
     public String getPassword() {
         return password;
     }
+
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
 
     @Override
     public boolean isAccountNonExpired() {
@@ -61,13 +67,5 @@ public class UserEntity implements UserDetails {
     }
 
 
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }
 

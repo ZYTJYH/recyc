@@ -46,21 +46,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable();
     }
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(new UserService()).passwordEncoder(passwordEncoder());
-        //也可以将用户名密码写在内存，不推荐
-        auth.inMemoryAuthentication().withUser("root1").password("123456").roles("USER");
-    }
 
+
+    @Autowired
+    public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userService()).passwordEncoder(new EmptyPasswordEncoder());
+//        auth.inMemoryAuthentication().passwordEncoder(new EmptyPasswordEncoder()).withUser("root1").password("123456").roles("USER");
+    }
     /**
      * 设置用户密码的加密方式为不加密
      */
-    @Bean
-    public EmptyPasswordEncoder passwordEncoder() {
-        return new EmptyPasswordEncoder();
-    }
-
     class EmptyPasswordEncoder implements PasswordEncoder{
 
         @Override
@@ -70,8 +65,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         @Override
         public boolean matches(CharSequence charSequence, String s) {
+//            System.out.print()
             return charSequence.toString().equals(s);
         }
+    }
+
+
+
+    /**
+     *从数据库中读取用户信息
+     */
+    @Bean
+    public UserDetailsService userService() {
+        return new UserService();
     }
 
 }
