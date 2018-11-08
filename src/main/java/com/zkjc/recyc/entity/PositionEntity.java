@@ -36,6 +36,17 @@ public class PositionEntity implements Serializable {
 
     }
 
+    public void setWorkStatus(EmployeeStatusEnum workStatus) {
+        this.workStatus = workStatus;
+    }
+
+    public EmployeeKindEnum getKind() {
+        return kind;
+    }
+
+    public void setKind(EmployeeKindEnum kind) {
+        this.kind = kind;
+    }
 
     public String getEmployeeId() {
         return employeeId;

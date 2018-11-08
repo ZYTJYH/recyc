@@ -1,8 +1,11 @@
 package com.zkjc.recyc.controller;
 
+import com.zkjc.recyc.core.Result;
+import com.zkjc.recyc.core.ResultGenerator;
 import com.zkjc.recyc.entity.BossEntity;
 import com.zkjc.recyc.entity.PositionEntity;
 import com.zkjc.recyc.entity.UserEntity;
+import com.zkjc.recyc.enums.EmployeeKindEnum;
 import com.zkjc.recyc.enums.EmployeeStatusEnum;
 import com.zkjc.recyc.mapper.BossMapper;
 import com.zkjc.recyc.mapper.PositionMapper;
@@ -31,14 +34,15 @@ public class InformationController {
 
 
     @RequestMapping(value = "/Positions",method = RequestMethod.GET)
-    public List<PositionEntity> getPositions() {
-//        try {
-            List<PositionEntity> positions = positionMapper.getAll();
-//        }catch (Exception e)
-//        {
-//            return "失败";
-//        }
-        return positions;
+    public Result getPositions() {
+        List<PositionEntity> positions;
+        try {
+             positions = positionMapper.getAll();
+        }catch (Exception e)
+        {
+            return ResultGenerator.genFailResult("失败");
+        }
+        return ResultGenerator.genSuccessResult(positions);
     }
 
     @RequestMapping(value = "/Positions",method = RequestMethod.POST)
@@ -48,8 +52,9 @@ public class InformationController {
                                  @RequestParam("latitude") Double latitude,
                                  @RequestParam("workStatus") EmployeeStatusEnum workStatus,
                                  @RequestParam("bossId") String bossId,
-                                 @RequestParam("information") String information) {
-        PositionEntity position=new PositionEntity(employeeId,time,longitude,latitude,workStatus,bossId,information);
+                                 @RequestParam("information") String information,
+                                 @RequestParam("kind") EmployeeKindEnum kind) {
+        PositionEntity position=new PositionEntity(employeeId,time,longitude,latitude,workStatus,bossId,information,kind);
         try {
             positionMapper.insert(position);
         }catch (Exception e){
@@ -59,43 +64,52 @@ public class InformationController {
     }
 
     @RequestMapping(value = "/Positions",method = RequestMethod.PUT)
-    public String updatePosition(@RequestParam("employeeId") String employeeId,
+    public Result updatePosition(@RequestParam("employeeId") String employeeId,
                                  @RequestParam("time") Date time,
                                  @RequestParam("longitude") Double longitude,
                                  @RequestParam("latitude") Double latitude,
                                  @RequestParam("workStatus") EmployeeStatusEnum workStatus,
                                  @RequestParam("bossId") String bossId,
-                                 @RequestParam("information") String information) {
-        PositionEntity position=new PositionEntity(employeeId,time,longitude,latitude,workStatus,bossId,information);
+                                 @RequestParam("information") String information,
+                                 @RequestParam("kind") EmployeeKindEnum kind) {
+        PositionEntity position=new PositionEntity(employeeId,time,longitude,latitude,workStatus,bossId,information,kind);
         try {
             positionMapper.update(position);
-        }catch (Exception e){
-            return "失败";
+        }catch (Exception e)
+        {
+            return ResultGenerator.genFailResult("失败");
         }
-        return "成功";
+        return ResultGenerator.genSuccessResult();
     }
 
     @RequestMapping(value = "/Positions",method = RequestMethod.DELETE)
-    public String deletePosition(@RequestParam("employeeId") String employeeId){
+    public Result deletePosition(@RequestParam("employeeId") String employeeId){
         try {
             positionMapper.delete(employeeId);
-        }catch (Exception e){
-            return "失败";
+        }catch (Exception e)
+        {
+            return ResultGenerator.genFailResult("失败");
         }
-        return "成功";
+        return ResultGenerator.genSuccessResult();
     }
 
 
 
     @RequestMapping(value = "/Bosses/{bossId}",method = RequestMethod.GET)
-    public BossEntity getBoss(@PathVariable("bossId") String bossId)
+    public Result getBoss(@PathVariable("bossId") String bossId)
     {
-        BossEntity boss=bossMapper.getBoss(bossId);
-        return boss;
+        BossEntity boss;
+        try{
+            boss=bossMapper.getBoss(bossId);
+         }catch (Exception e)
+        {
+            return ResultGenerator.genFailResult("失败");
+        }
+        return ResultGenerator.genSuccessResult(boss);
     }
 
     @RequestMapping(value = "/Bosses",method = RequestMethod.POST)
-    public String insertBoss(@RequestParam("bossId") String bossId,
+    public Result insertBoss(@RequestParam("bossId") String bossId,
                               @RequestParam("name") String name,
                               @RequestParam("phone") String phone)
     {
@@ -104,25 +118,25 @@ public class InformationController {
             bossMapper.insert(boss);
         }catch (Exception e)
         {
-            return "失败";
+            return ResultGenerator.genFailResult("失败");
         }
-        return "成功";
+        return ResultGenerator.genSuccessResult();
     }
 
     @RequestMapping(value = "/Bosses/{bossId}",method = RequestMethod.DELETE)
-    public String deleteBoss(@PathVariable("bossId") String bossId)
+    public Result deleteBoss(@PathVariable("bossId") String bossId)
     {
         try {
             bossMapper.delete(bossId);
         }catch (Exception e)
         {
-            return "失败";
+            return ResultGenerator.genFailResult("失败");
         }
-        return "成功";
+        return ResultGenerator.genSuccessResult();
     }
 
     @RequestMapping(value = "/Bosses",method = RequestMethod.PUT)
-    public String updateBoss(@RequestParam("bossId") String bossId,
+    public Result updateBoss(@RequestParam("bossId") String bossId,
                              @RequestParam("name") String name,
                              @RequestParam("phone") String phone)
     {
@@ -131,9 +145,9 @@ public class InformationController {
             bossMapper.update(boss);
         }catch (Exception e)
         {
-            return "失败";
+            return ResultGenerator.genFailResult("失败");
         }
-        return "成功";
+        return ResultGenerator.genSuccessResult();
     }
 
 
