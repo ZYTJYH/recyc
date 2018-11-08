@@ -5,6 +5,15 @@ public class BossEntity {
     private String name;
     private String phone;
 
+    public BossEntity() {
+    }
+
+    public BossEntity(String bossId, String name, String phone) {
+        this.bossId = bossId;
+        this.name = name;
+        this.phone = phone;
+    }
+
     public String getBossId() {
         return bossId;
     }

@@ -21,17 +21,17 @@ public interface PositionMapper {
             @Result(property = "longitude", column = "longitude"),
             @Result(property = "latitude", column = "latitude"),
             @Result(property = "workStatus", column = "work_status",javaType = EmployeeStatusEnum.class),
-            @Result(property = "bossId", column = "boss"),
-            @Result(property = "time", column = "time")
+            @Result(property = "bossId", column = "boss_id"),
+            @Result(property = "information", column = "information")
     })
     List<PositionEntity> getAll();
 
-//    @Insert("INSERT INTO users(userName,passWord,user_sex) VALUES(#{userName}, #{passWord}, #{userSex})")
-//    void insert(UserEntity user);
-//
-//    @Update("UPDATE users SET userName=#{userName},nick_name=#{nickName} WHERE id =#{id}")
-//    void update(UserEntity user);
-//
-//    @Delete("DELETE FROM users WHERE id =#{id}")
-//    void delete(Long id);
+    @Insert("INSERT INTO Positions(employee_id,time,longitude,latitude,work_status,boss_id,information) VALUES(#{employeeId},#{time},#{longitude},#{latitude},#{workStatus},#{bossId},#{information})")
+    void insert(PositionEntity position);
+
+    @Update("UPDATE Positions SET time=#{time},longitude=#{longitude},latitude=#{latitude},work_status=#{workStatus},boss_id=#{bossId},information=#{information} WHERE employee_id =#{employeeId}")
+    void update(PositionEntity position);
+
+    @Delete("DELETE FROM Positions WHERE employee_id =#{employeeId}")
+    void delete(String employeeId);
 }
