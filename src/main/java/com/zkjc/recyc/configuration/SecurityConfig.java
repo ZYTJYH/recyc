@@ -1,5 +1,6 @@
 package com.zkjc.recyc.configuration;
 
+import com.zkjc.recyc.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -32,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         //  允许所有用户访问"/"和"/index.html"
         http.authorizeRequests()
-                .antMatchers( "/login").permitAll()
+                .antMatchers( "/login","/information/**").permitAll()
                 .anyRequest().authenticated()   // 其他地址的访问均需验证权限
                 .and()
                 .formLogin()
@@ -42,6 +44,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/home")
                 .and()
                 .csrf().disable();
+    }
+
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.userDetailsService(new UserService()).passwordEncoder(passwordEncoder());
+        //也可以将用户名密码写在内存，不推荐
+        auth.inMemoryAuthentication().withUser("root1").password("123456").roles("USER");
+    }
+
+    /**
+     * 设置用户密码的加密方式为不加密
+     */
+    @Bean
+    public EmptyPasswordEncoder passwordEncoder() {
+        return new EmptyPasswordEncoder();
+    }
+
+    class EmptyPasswordEncoder implements PasswordEncoder{
+
+        @Override
+        public String encode(CharSequence charSequence) {
+            return charSequence.toString();
+        }
+
+        @Override
+        public boolean matches(CharSequence charSequence, String s) {
+            return charSequence.toString().equals(s);
+        }
     }
 
 }

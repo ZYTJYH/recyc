@@ -3,7 +3,6 @@ package com.zkjc.recyc.mapper;
 import com.zkjc.recyc.entity.UserEntity;
 import org.apache.ibatis.annotations.*;
 
-import java.util.List;
 
 public interface UserMapper {
 
@@ -14,12 +13,12 @@ public interface UserMapper {
 //    })
 //    List<UserEntity> getAll();
 //
-//    @Select("SELECT * FROM users WHERE id = #{id}")
-//    @Results({
-//            @Result(property = "userSex",  column = "user_sex", javaType = UserSexEnum.class),
-//            @Result(property = "nickName", column = "nick_name")
-//    })
-//    UserEntity getOne(Long id);
+    @Select("SELECT * FROM users WHERE username = #{username}")
+    @Results({
+            @Result(property = "username",  column = "username"),
+            @Result(property = "password", column = "password")
+    })
+    UserEntity getUser(String username);
 //
 //    @Insert("INSERT INTO users(userName,passWord,user_sex) VALUES(#{userName}, #{passWord}, #{userSex})")
 //    void insert(UserEntity user);

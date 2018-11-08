@@ -6,3 +6,7 @@ INSERT INTO Positions(employee_id,time,longitude,latitude,work_status,boss_id,in
 
 -- Bosses表测试数据
 INSERT INTO Bosses(boss_id,`name`,phone) VALUES("1000000001","李小二","12233334444")
+
+-- Users表测试数据
+INSERT INTO Users(username,password) VALUES("root2","123456");
+INSERT INTO Users(username,password) VALUES("root3","123456");
