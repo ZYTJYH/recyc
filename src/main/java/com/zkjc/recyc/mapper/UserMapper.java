@@ -13,7 +13,7 @@ public interface UserMapper {
 //    })
 //    List<UserEntity> getAll();
 //
-    @Select("SELECT * FROM users WHERE username = #{username}")
+    @Select("SELECT * FROM Users WHERE username = #{username}")
     @Results({
             @Result(property = "username",  column = "username"),
             @Result(property = "password", column = "password")

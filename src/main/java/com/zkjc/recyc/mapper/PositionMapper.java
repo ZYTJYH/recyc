@@ -15,7 +15,7 @@ public interface PositionMapper {
 
 
 
-    @Select("SELECT * FROM positions WHERE work_status='on'")
+    @Select("SELECT * FROM Positions WHERE work_status='on'")
     @Results({
             @Result(property = "employeeId",  column = "employee_id"),
             @Result(property = "time", column = "time"),

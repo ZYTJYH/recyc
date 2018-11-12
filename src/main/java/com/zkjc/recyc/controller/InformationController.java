@@ -46,7 +46,7 @@ public class InformationController {
     }
 
     @RequestMapping(value = "/Positions",method = RequestMethod.POST)
-    public String insertPosition(@RequestParam("employeeId") String employeeId,
+    public Result insertPosition(@RequestParam("employeeId") String employeeId,
                                  @RequestParam("time") Date time,
                                  @RequestParam("longitude") Double longitude,
                                  @RequestParam("latitude") Double latitude,
@@ -57,10 +57,11 @@ public class InformationController {
         PositionEntity position=new PositionEntity(employeeId,time,longitude,latitude,workStatus,bossId,information,kind);
         try {
             positionMapper.insert(position);
-        }catch (Exception e){
-            return "失败";
+        }catch (Exception e)
+        {
+            return ResultGenerator.genFailResult("失败");
         }
-        return "成功";
+        return ResultGenerator.genSuccessResult();
     }
 
     @RequestMapping(value = "/Positions",method = RequestMethod.PUT)

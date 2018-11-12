@@ -1,7 +1,7 @@
 
-DROP TABLE Positions;
-DROP TABLE Bosses;
-DROP TABLE Users;
+-- DROP TABLE Positions;
+-- DROP TABLE Bosses;
+-- DROP TABLE Users;
 CREATE TABLE Positions
 (
 id int PRIMARY key auto_increment,
