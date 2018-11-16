@@ -1,24 +1,26 @@
 package com.zkjc.recyc.entity;
 
-public class BossEntity {
-    private String bossId;
-    private String bossName;
+public class PersonEntity {
+    private String employeeId;
+    private String personName;
     private String phone;
+    private String job;
     private String kind;
     private String gender;
     private int age;
     private String area;
-    public BossEntity() {
-    }
+    private String bossId;
 
-    public BossEntity(String bossId, String bossName, String phone, String kind, String gender, int age, String area) {
-        this.bossId = bossId;
-        this.bossName = bossName;
+    public PersonEntity(String employeeId, String personName, String phone, String job, String kind, String gender, int age, String area, String bossId) {
+        this.employeeId = employeeId;
+        this.personName = personName;
         this.phone = phone;
+        this.job = job;
         this.kind = kind;
         this.gender = gender;
         this.age = age;
         this.area = area;
+        this.bossId = bossId;
     }
 
     public String getBossId() {
@@ -29,12 +31,20 @@ public class BossEntity {
         this.bossId = bossId;
     }
 
-    public String getBossName() {
-        return bossName;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setName(String bossName) {
-        this.bossName = bossName;
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public String getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName;
     }
 
     public String getPhone() {
@@ -43,6 +53,14 @@ public class BossEntity {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
     }
 
     public String getKind() {

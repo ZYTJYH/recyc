@@ -4,7 +4,7 @@ import com.zkjc.recyc.entity.UserEntity;
 import org.apache.ibatis.annotations.*;
 
 
-public interface UserMapper {
+public interface UsersMapper {
 
 //    @Select("SELECT * FROM users")
 //    @Results({

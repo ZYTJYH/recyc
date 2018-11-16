@@ -1,17 +1,30 @@
+DROP TABLE Positions IF EXIST Positions;
+DROP TABLE Bosses IF EXIST Bosses;
+DROP TABLE Users IF EXIST Users;
+DROP TABLE Bins IF EXIST Bins;
+DROP TABLE Persons IF EXIST Persons;
+DROP TABLE Cars IF EXIST Cars;
+DROP TABLE Store IF EXIST Store;
 
--- DROP TABLE Positions;
--- DROP TABLE Bosses;
--- DROP TABLE Users;
 CREATE TABLE Positions
 (
 id int PRIMARY key auto_increment,
 employee_id char(10) not null,
-time datetime not null,
+update_time datetime not null,
 longitude double not null,
 latitude double not null,
 work_status varchar(32) not null,
-boss_id char(10) not null,
-information text not null,
+kind varchar(32) not null
+) default charset=utf8;
+
+CREATE TABLE Store
+(
+id int PRIMARY key auto_increment,
+employee_id char(10) not null,
+update_time datetime not null,
+longitude double not null,
+latitude double not null,
+work_status varchar(32) not null,
 kind varchar(32) not null
 ) default charset=utf8;
 
@@ -20,8 +33,12 @@ CREATE TABLE Bosses
 (
 id int PRIMARY key auto_increment,
 boss_id char(10) not null,
-name varchar(20) not null,
-phone varchar(11) not null
+boss_name varchar(20) not null,
+phone varchar(11) not null,
+kind varchar(255) not null,
+gender varchar(255) not null,
+age int not null,
+area varchar(255) not null
 ) default charset=utf8;
 
 
@@ -33,4 +50,44 @@ password varchar(255) not null
 ) default charset=utf8;
 
 
+CREATE TABLE Bins;
+(
+id int PRIMARY key auto_increment,
+employee_id char(10) not null,
+bin_name varchar(255) not null,
+current_v int not null,
+max_v int not null,
+area varchar(255) not null,
+temperature double not null
+boss_id char(10) not null
+) default charset=utf8;
 
+
+CREATE TABLE Persons;
+(
+id int PRIMARY key auto_increment,
+employee_id char(10) not null,
+person_name varchar(20) not null,
+phone varchar(11) not null,
+job varchar(255) not null,
+kind varchar(255) not null,
+gender varchar(255) not null,
+age int not null,
+area varchar(255) not null,
+boss_id char(10) not null
+) default charset=utf8;
+
+CREATE TABLE Cars;
+(
+id int PRIMARY key auto_increment,
+employee_id char(10) not null,
+car_name varchar(20) not null,
+phone varchar(11) not null,
+car_number varchar(255) not null,
+car_type varchar(255) not null,
+kind varchar(255) not null,
+gender varchar(255) not null,
+age int not null,
+area varchar(255) not null,
+boss_id char(10) not null
+) default charset=utf8;
