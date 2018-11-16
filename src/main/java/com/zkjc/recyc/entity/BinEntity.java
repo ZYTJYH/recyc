@@ -3,27 +3,22 @@ package com.zkjc.recyc.entity;
 public class BinEntity {
     private String employeeId;
     private String binName;
-    private String currentV;
-    private String maxV;
+    private int currentV;
+    private int maxV;
     private String area;
     private double temperature;
     private String bossId;
 
-    public BinEntity(String employeeId, String binName, String currentV, String maxV, String area, double temperature, String bossId) {
+    public BinEntity(){
+
+    }
+    public BinEntity(String employeeId, String binName, int currentV, int maxV, String area, double temperature, String bossId) {
         this.employeeId = employeeId;
         this.binName = binName;
         this.currentV = currentV;
         this.maxV = maxV;
         this.area = area;
         this.temperature = temperature;
-        this.bossId = bossId;
-    }
-
-    public String getBossId() {
-        return bossId;
-    }
-
-    public void setBossId(String bossId) {
         this.bossId = bossId;
     }
 
@@ -43,19 +38,19 @@ public class BinEntity {
         this.binName = binName;
     }
 
-    public String getCurrentV() {
+    public int getCurrentV() {
         return currentV;
     }
 
-    public void setCurrentV(String currentV) {
+    public void setCurrentV(int currentV) {
         this.currentV = currentV;
     }
 
-    public String getMaxV() {
+    public int getMaxV() {
         return maxV;
     }
 
-    public void setMaxV(String maxV) {
+    public void setMaxV(int maxV) {
         this.maxV = maxV;
     }
 
@@ -73,5 +68,13 @@ public class BinEntity {
 
     public void setTemperature(double temperature) {
         this.temperature = temperature;
+    }
+
+    public String getBossId() {
+        return bossId;
+    }
+
+    public void setBossId(String bossId) {
+        this.bossId = bossId;
     }
 }

@@ -7,12 +7,28 @@ import com.zkjc.recyc.mapper.BossesMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/information")
 public class BossesController {
     @Autowired
     private BossesMapper bossesMapper;
+
+    @RequestMapping(value = "/Bosses",method = RequestMethod.GET)
+    public Result getBosses()
+    {
+        List<BossEntity> bosses;
+        try{
+            bosses= bossesMapper.getBosses();
+        }catch (Exception e)
+        {
+            return ResultGenerator.genFailResult("失败");
+        }
+        return ResultGenerator.genSuccessResult(bosses);
+    }
+
 
     @RequestMapping(value = "/Bosses/{bossId}",method = RequestMethod.GET)
     public Result getBoss(@PathVariable("bossId") String bossId)
@@ -59,8 +75,8 @@ public class BossesController {
         return ResultGenerator.genSuccessResult();
     }
 
-    @RequestMapping(value = "/Bosses",method = RequestMethod.PUT)
-    public Result updateBoss(@RequestParam("bossId") String bossId,
+    @RequestMapping(value = "/Bosses/{bossId}",method = RequestMethod.PUT)
+    public Result updateBoss(@PathVariable("bossId") String bossId,
                              @RequestParam("bossName") String bossName,
                              @RequestParam("phone") String phone,
                              @RequestParam("kind") String kind,
@@ -73,7 +89,7 @@ public class BossesController {
             bossesMapper.update(boss);
         }catch (Exception e)
         {
-            return ResultGenerator.genFailResult("失败");
+            return ResultGenerator.genFailResult(e.getMessage());
         }
         return ResultGenerator.genSuccessResult();
     }

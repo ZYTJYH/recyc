@@ -11,6 +11,9 @@ public class PersonEntity {
     private String area;
     private String bossId;
 
+    public PersonEntity(){
+
+    }
     public PersonEntity(String employeeId, String personName, String phone, String job, String kind, String gender, int age, String area, String bossId) {
         this.employeeId = employeeId;
         this.personName = personName;

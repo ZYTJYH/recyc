@@ -16,7 +16,7 @@
 	</style>
 	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=69sgiYLiR9ssKP9HqEeo4W4ig7W8hLHY"></script>
 	<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
-
+	<script src="js/simulation.js"></script>
 	<title>光大国际 智慧环卫一体化管理平台</title>
 </head>
 <body>
@@ -24,11 +24,9 @@
 	<div id="allmap"></div>
 </body>
 </html>
-
-
 <script type="text/javascript">
-    var url="http://47.105.166.205:8080/information"
-	// var url="http://localhost:8080/information"
+    // var url="http://47.105.166.205:8080/information"
+    var url="http://localhost:8080/information"
 
     //北湖路  5
     var fiveX = [114.971756,114.972003,114.972393,114.972546,114.972735,114.972973,114.973116,114.973355,114.973579,114.973759,114.97392,114.974176,114.9745,114.974751,114.975057,114.975304,114.975555,114.975789,114.97604,114.97631,114.976575,114.976876,114.977109,114.977415,114.977729,114.978044,114.978327,114.978547,114.978816,114.979054,114.979378,114.979629,114.979818,114.980083,114.980397,114.980685,114.980936,114.981206,114.98139,114.981664,114.981884,114.982153,114.982378,114.982612,114.982917,114.983204,114.983433,114.983685,114.983946,114.984166,114.984439,114.984678,114.984974,114.985239,114.985468,114.985729,114.985994,114.986196,114.986456,114.986735,114.986955,114.987206,114.987507,114.987741,114.988001,114.988311,114.988531,114.988805,114.989003,114.989277,114.989457,114.98974,114.989951,114.990261,114.990494,114.990732,114.99097,114.991321,114.991572,114.99177,114.992017,114.992246,114.992484,114.992735,114.99309,114.993387,114.993665,114.993849];
@@ -70,6 +68,9 @@
     var bossIdArray=new Array();
     var informationArray=new Array();
     var kindArray=new Array();
+    var carIcon = new BMap.Icon("images/car.png", new BMap.Size(25, 25)) ;
+    var binIcon = new BMap.Icon("images/bin.png", new BMap.Size(25, 25)) ;
+    var personIcon = new BMap.Icon("images/person.png", new BMap.Size(25, 25)) ;
 
     $.ajaxSettings.async = false;
 
@@ -80,12 +81,11 @@
             longitudeArray[i] = data['data'][i]['longitude'];
             latitudeArray[i] = data['data'][i]['latitude'];
             workStatusArray[i] = data['data'][i]['workStatus'];
-            bossIdArray[i] = data['data'][i]['bossId'];
-            informationArray[i] = data['data'][i]['information'];
             kindArray[i] = data['data'][i]['kind'];
+
             selectRoadsArray[i]=getRoadsNumber();
             directArray[i]=getDirection();
-			indexArray[i]=getIndex(xSum[selectRoadsArray[i]-1])
+            indexArray[i]=getIndex(xSum[selectRoadsArray[i]-1])
         }
 
     });
@@ -120,81 +120,79 @@
 
 
     function getLoc() {
-    //测试垃圾车
-    var data_info=new Array(); //先声明一维
+        //测试垃圾车
+        var data_info=new Array(); //先声明一维
 
-    for(var i=0;i<employeeIdArray.length;i++){  //一维长度为2
-        data_info[i]=new Array(); //再声明二维
-		var temp;
-        data_info[i][0]=longitudeArray[i];
-        data_info[i][1]=latitudeArray[i];
-        $.ajaxSettings.async = false;
-        $.getJSON( url + "/Bosses/"+bossIdArray[i],{},function (data) {
-                temp="<p><font size='2'>负责人："+ data['data']['name']+"</font></p>"+"<p><font size='2'>手机号："+data['data']['phone']+"</font></p>";
+        for(var i=0;i<employeeIdArray.length;i++){  //一维长度为2
+            data_info[i]=new Array(); //再声明二维
+            var temp;
+            data_info[i][0]=longitudeArray[i];
+            data_info[i][1]=latitudeArray[i];
+            $.ajaxSettings.async = false;
+            $.getJSON( url + "/Bosses/"+bossIdArray[i],{},function (data) {
+                    temp="<p><font size='2'>负责人："+ data['data']['name']+"</font></p>"+"<p><font size='2'>手机号："+data['data']['phone']+"</font></p>";
+                }
+            );
+            $.ajaxSettings.async = true;
+            data_info[i][2]="<p><font size='2'>"+informationArray[i]+"</font></p>"+temp;
+
+        }
+        var opts = {
+            width : 300,     // 信息窗口宽度
+            height: 200,     // 信息窗口高度
+            title : "详细信息" , // 信息窗口标题
+            enableMessage:true//设置允许信息窗发送短息
+        };
+        map.clearOverlays();
+
+
+        for(var i=0;i<data_info.length;i++){
+            var icon;
+            if(kindArray[i]=="car")
+            {
+                icon=carIcon;
+            }else if(kindArray[i]=="bin")
+            {
+                icon=binIcon
+            }else{
+                icon=personIcon;
             }
-        );
-        $.ajaxSettings.async = true;
-        data_info[i][2]="<p><font size='2'>"+informationArray[i]+"</font></p>"+temp;
-
-    }
-    var opts = {
-        width : 300,     // 信息窗口宽度
-        height: 200,     // 信息窗口高度
-        title : "详细信息" , // 信息窗口标题
-        enableMessage:true//设置允许信息窗发送短息
-    };
-    map.clearOverlays();
-    var carIcon = new BMap.Icon("images/car.png", new BMap.Size(25, 25)) ;
-	var binIcon = new BMap.Icon("images/bin.png", new BMap.Size(25, 25)) ;
-	var personIcon = new BMap.Icon("images/person.png", new BMap.Size(25, 25)) ;
-
-    for(var i=0;i<data_info.length;i++){
-        var icon;
-        if(kindArray[i]=="car")
-		{
-		    icon=carIcon;
-		}else if(kindArray[i]=="bin")
-		{
-		    icon=binIcon
-		}else{
-            icon=personIcon;
-		}
-        var marker = new BMap.Marker(new BMap.Point(data_info[i][0],data_info[i][1]),{icon:icon});  // 创建标注
-        var content = data_info[i][2];
-        map.addOverlay(marker);               // 将标注添加到地图中
-        addClickHandler(content,marker);
-    }
-    function addClickHandler(content,marker){
-        marker.addEventListener("click",function(e){
-            openInfo(content,e)}
-        );
-    }
-    function openInfo(content,e){
-        console.log(content);
-        var p = e.target;
-        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
-        var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
-        map.openInfoWindow(infoWindow,point); //开启信息窗口
-    }
+            var marker = new BMap.Marker(new BMap.Point(data_info[i][0],data_info[i][1]),{icon:icon});  // 创建标注
+            var content = data_info[i][2];
+            map.addOverlay(marker);               // 将标注添加到地图中
+            addClickHandler(content,marker);
+        }
+        function addClickHandler(content,marker){
+            marker.addEventListener("click",function(e){
+                openInfo(content,e)}
+            );
+        }
+        function openInfo(content,e){
+            console.log(content);
+            var p = e.target;
+            var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+            var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
+            map.openInfoWindow(infoWindow,point); //开启信息窗口
+        }
 
 
         for (var i = 0; i < employeeIdArray.length; i++) {
             if(kindArray[i]!="bin") {
                 var moveD;
                 if(kindArray[i]=="car")
-				{
+                {
                     moveD=Cmove();
-				}else{
+                }else{
                     moveD=Pmove();
-				}
-				if(directArray[i]==true)
-				{
-				    temp=1;
-				}else {
+                }
+                if(directArray[i]==true)
+                {
+                    temp=1;
+                }else {
                     temp = -1;
                 }
                 var resultIndex=indexArray[i]+moveD*temp;
-				indexArray[i]=resultIndex;
+                indexArray[i]=resultIndex;
                 if(resultIndex<=0) {
                     resultIndex = 0;
                     directArray[i]=!directArray[i];
@@ -202,8 +200,8 @@
                 if(resultIndex>=xSum[selectRoadsArray[i]-1].length-1){
                     resultIndex=xSum[selectRoadsArray[i]-1].length-1;
                     directArray[i]=!directArray[i];
-				}
-				latitudeArray[i]=ySum[selectRoadsArray[i]-1][indexArray[i]];
+                }
+                latitudeArray[i]=ySum[selectRoadsArray[i]-1][indexArray[i]];
                 longitudeArray[i]=xSum[selectRoadsArray[i]-1][indexArray[i]];
             }
 
@@ -257,31 +255,31 @@
         var temp=Math.random();
         if(temp<0.5){
             return 0;
-		}else{
+        }else{
             return 1;
-		}
-	}
+        }
+    }
 
-	function Cmove(){
-		var temp=Math.random();
-		if(temp<0.5){
-		    return 2;
-		}else if(temp>=0.5&&temp<0.8)
-		    return 3;
-		else{
-		    return 4;
-		}
-	}
+    function Cmove(){
+        var temp=Math.random();
+        if(temp<0.5){
+            return 2;
+        }else if(temp>=0.5&&temp<0.8)
+            return 3;
+        else{
+            return 4;
+        }
+    }
 
-	function getRoadsNumber(){
+    function getRoadsNumber(){
         var temp=Math.ceil(Math.random()*5);
         switch (temp) {
-			case 0:return 1;break;
-			case 1:return 1;break;
-			case 2:return 2;break;
-			case 3:return 3;break;
-			case 4:return 4;break;
-			case 5:return 5;break;
+            case 0:return 1;break;
+            case 1:return 1;break;
+            case 2:return 2;break;
+            case 3:return 3;break;
+            case 4:return 4;break;
+            case 5:return 5;break;
         }
     }
 
@@ -297,11 +295,10 @@
     function getIndex(array){
         var temp=Math.ceil(Math.random()*array.length);
         return temp;
-	}
-
-
-
+    }
 </script>
+
+
 
 
 

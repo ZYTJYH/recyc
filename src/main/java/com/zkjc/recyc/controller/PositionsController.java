@@ -65,8 +65,8 @@ public class PositionsController {
         return ResultGenerator.genSuccessResult();
     }
 
-    @RequestMapping(value = "/Positions",method = RequestMethod.PUT)
-    public Result updatePosition(@RequestParam("employeeId") String employeeId,
+    @RequestMapping(value = "/Positions/{employeeId}",method = RequestMethod.PUT)
+    public Result updatePosition(@PathVariable("employeeId") String employeeId,
                                  @RequestParam("updateTime") Date updateTime,
                                  @RequestParam("longitude") Double longitude,
                                  @RequestParam("latitude") Double latitude,
