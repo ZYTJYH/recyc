@@ -13,7 +13,11 @@
 			font-family: 华文行楷;
 		}
 	body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
-	</style>
+
+    #left{float:left;width:33%}
+    #allmap{float:left;width:33%}
+    #right{float:left;width:33%}
+    </style>
 	<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=69sgiYLiR9ssKP9HqEeo4W4ig7W8hLHY"></script>
 	<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
 	<script src="js/simulation.js"></script>
@@ -21,7 +25,34 @@
 </head>
 <body>
 <center><p id="HeadTitle">光大国际 智慧环卫一体化管理平台</p></center>
-	<div id="allmap"></div>
+	<div>
+        <div id="left">
+            <div id="carsInformation">
+                <table id="carsTable"border="1" cellspacing="0" cellpadding="0">
+                <tr>
+                    <th>雇员Id</th>
+                    <th>姓名</th>
+                    <th>手机</th>
+                    <th>车牌</th>
+                    <th>车型</th>
+                    <th>种类</th>
+                    <th>性别</th>
+                    <th>年龄</th>
+                    <th>地区</th>
+                </tr>
+                </table>
+            </div>
+            <div id="personsInformation">
+
+            </div>
+        </div>
+        <div id="allmap"></div>
+        <div id="right">
+            <div id="binsInformation">
+            </div>
+        </div>
+
+    </div>
 </body>
 </html>
 <script type="text/javascript">
@@ -54,88 +85,149 @@
 
     var xSum=[oneX,twoX,threeX,fourX,fiveX];
     var ySum=[oneY,twoY,threeY,fourY,fiveY];
+    var numOfCar=10;
+    var numOfPerson=40;
     var selectRoadsArray=new Array();
     var directArray=new Array();
     var indexArray=new Array();
+    var simulationKindArray=new Array();
+    var simulationLongitudeArray=new Array();
+    var simulationLatitudeArray=new Array();
 
-    var offx=0;
-    var offy=0;
+
+    //Posistions表
     var employeeIdArray=new Array();
     var timeArray=new Array();
     var longitudeArray=new Array();
     var latitudeArray=new Array();
     var workStatusArray=new Array();
-    var bossIdArray=new Array();
-    var informationArray=new Array();
     var kindArray=new Array();
+
+    //Cars表
+    var employeeIdCarsArray=new Array();
+    var carNameCarsArray=new Array();
+    var phoneCarsArray=new Array();
+    var carNumberCarsArray=new Array();
+    var carTypeCarsArray=new Array();
+    var kindCarsArray=new Array();
+    var genderCarsArray=new Array();
+    var ageCarsArray=new Array();
+    var areaCarsArray=new Array();
+    var numOfCarsTable;
+    //Persons表
+    var eIdPersons=new Array();
+
+    //Bins表
+    var eIdCars=new Array();
+
     var carIcon = new BMap.Icon("images/car.png", new BMap.Size(25, 25)) ;
     var binIcon = new BMap.Icon("images/bin.png", new BMap.Size(25, 25)) ;
     var personIcon = new BMap.Icon("images/person.png", new BMap.Size(25, 25)) ;
+    var map = new BMap.Map("allmap");    // 创建Map实例
 
-    $.ajaxSettings.async = false;
+    // getPositions();
+    initSimulaton();
+    initMap();
 
-    $.getJSON( url + "/Positions",{},function (data) {
-        for (var i = 0; i < data['data'].length; i++) {
-            employeeIdArray[i] = data['data'][i]['employeeId'];
-            timeArray[i] = data['data'][i]['time'];
-            longitudeArray[i] = data['data'][i]['longitude'];
-            latitudeArray[i] = data['data'][i]['latitude'];
-            workStatusArray[i] = data['data'][i]['workStatus'];
-            kindArray[i] = data['data'][i]['kind'];
+    setInterval("updateAll()",5000);
 
+    function getPositions() {
+        $.ajaxSettings.async = false;
+        $.getJSON( url + "/Positions",{},function (data) {
+            for (var i = 0; i < data['data'].length; i++) {
+                employeeIdArray[i] = data['data'][i]['employeeId'];
+                timeArray[i] = data['data'][i]['time'];
+                longitudeArray[i] = data['data'][i]['longitude'];
+                latitudeArray[i] = data['data'][i]['latitude'];
+                workStatusArray[i] = data['data'][i]['workStatus'];
+                kindArray[i] = data['data'][i]['kind'];
+            }
+            numOfCarsTable=data['data'].length;
+
+        });
+        $.ajaxSettings.async = true;
+    }
+
+	function initMap(){
+        // 百度地图API功能
+        map.centerAndZoom(new BMap.Point(114.987,32.754), 16);  // 初始化地图,设置中心点坐标和地图级别
+
+        //添加控件和比例尺
+        var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});
+        var top_left_navigation = new BMap.NavigationControl();
+        map.addControl(top_left_control);
+        map.addControl(top_left_navigation);
+
+
+        var overViewOpen = new BMap.OverviewMapControl({isOpen:true, anchor: BMAP_ANCHOR_BOTTOM_RIGHT});
+        map.addControl(overViewOpen);
+
+        //添加地图类型控件
+        map.addControl(new BMap.MapTypeControl({
+            mapTypes:[
+                BMAP_NORMAL_MAP,
+                BMAP_HYBRID_MAP
+            ]}));
+        map.setCurrentCity("新蔡县");          // 设置地图显示的城市 此项是必须设置的
+        map.enableScrollWheelZoom(false);     //开启鼠标滚轮缩放
+	}
+
+    function getBoss() {
+        $.ajaxSettings.async = false;
+        $.getJSON(url + "/Bosses/" + bossIdArray[i], {}, function (data) {
+                temp = "<p><font size='2'>负责人：" + data['data']['name'] + "</font></p>" + "<p><font size='2'>手机号：" + data['data']['phone'] + "</font></p>";
+            }
+        );
+        $.ajaxSettings.async = true;
+    }
+
+    function initSimulaton() {
+        for(var i=0;i<numOfCar;i++)
+        {
+            selectRoadsArray[i]=getRoadsNumber();
+            directArray[i]=getDirection();
+            indexArray[i]=getIndex(xSum[selectRoadsArray[i]-1]);
+            simulationKindArray[i]="car";
+        }
+        for(var i=numOfCar;i<numOfCar+numOfPerson;i++)
+        {
             selectRoadsArray[i]=getRoadsNumber();
             directArray[i]=getDirection();
             indexArray[i]=getIndex(xSum[selectRoadsArray[i]-1])
+            simulationKindArray[i]="person";
         }
+    }
 
-    });
-
-    $.ajaxSettings.async = true;
-
-
-
-
-    // 百度地图API功能
-    var map = new BMap.Map("allmap");    // 创建Map实例
-    map.centerAndZoom(new BMap.Point(114.987,32.754), 16);  // 初始化地图,设置中心点坐标和地图级别
-
-    //添加控件和比例尺
-    var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});
-    var top_left_navigation = new BMap.NavigationControl();
-    map.addControl(top_left_control);
-    map.addControl(top_left_navigation);
-
-
-    var overViewOpen = new BMap.OverviewMapControl({isOpen:true, anchor: BMAP_ANCHOR_BOTTOM_RIGHT});
-    map.addControl(overViewOpen);
-
-    //添加地图类型控件
-    map.addControl(new BMap.MapTypeControl({
-        mapTypes:[
-            BMAP_NORMAL_MAP,
-            BMAP_HYBRID_MAP
-        ]}));
-    map.setCurrentCity("新蔡县");          // 设置地图显示的城市 此项是必须设置的
-    map.enableScrollWheelZoom(false);     //开启鼠标滚轮缩放
-
-
-    function getLoc() {
-        //测试垃圾车
-        var data_info=new Array(); //先声明一维
-
-        for(var i=0;i<employeeIdArray.length;i++){  //一维长度为2
-            data_info[i]=new Array(); //再声明二维
-            var temp;
-            data_info[i][0]=longitudeArray[i];
-            data_info[i][1]=latitudeArray[i];
-            $.ajaxSettings.async = false;
-            $.getJSON( url + "/Bosses/"+bossIdArray[i],{},function (data) {
-                    temp="<p><font size='2'>负责人："+ data['data']['name']+"</font></p>"+"<p><font size='2'>手机号："+data['data']['phone']+"</font></p>";
-                }
-            );
-            $.ajaxSettings.async = true;
-            data_info[i][2]="<p><font size='2'>"+informationArray[i]+"</font></p>"+temp;
-
+    function startSimulation() {
+        for (var i = 0; i < numOfPerson+numOfCar; i++) {
+            var moveD;
+            var temp=1;
+            if(simulationKindArray[i]=="car")
+            {
+                moveD=Cmove();
+            }else{
+                moveD=Pmove();
+            }
+            if(directArray[i]==true)
+            {
+                temp=1;
+            }else {
+                temp = -1;
+            }
+            var resultIndex=indexArray[i]+moveD*temp;
+            if(resultIndex<=0) {
+                resultIndex = 0;
+                directArray[i]=!directArray[i];
+            }
+            // console.log(selectRoadsArray)
+            // console.log(selectRoadsArray[i]-1)
+            if(resultIndex>=xSum[selectRoadsArray[i]-1].length-1){
+                resultIndex=xSum[selectRoadsArray[i]-1].length-1;
+                directArray[i]=!directArray[i];
+            }
+            indexArray[i]=resultIndex;
+            simulationLatitudeArray[i]=ySum[selectRoadsArray[i]-1][indexArray[i]];
+            simulationLongitudeArray[i]=xSum[selectRoadsArray[i]-1][indexArray[i]];
         }
         var opts = {
             width : 300,     // 信息窗口宽度
@@ -145,20 +237,19 @@
         };
         map.clearOverlays();
 
-
-        for(var i=0;i<data_info.length;i++){
+        for(var i=0;i<numOfPerson+numOfCar;i++){
             var icon;
-            if(kindArray[i]=="car")
+            if(simulationKindArray[i]=="car")
             {
                 icon=carIcon;
-            }else if(kindArray[i]=="bin")
+            }else if(simulationKindArray[i]=="bin")
             {
                 icon=binIcon
             }else{
                 icon=personIcon;
             }
-            var marker = new BMap.Marker(new BMap.Point(data_info[i][0],data_info[i][1]),{icon:icon});  // 创建标注
-            var content = data_info[i][2];
+            var marker = new BMap.Marker(new BMap.Point(simulationLongitudeArray[i],simulationLatitudeArray[i]),{icon:icon});  // 创建标注
+            var content ="hhh";
             map.addOverlay(marker);               // 将标注添加到地图中
             addClickHandler(content,marker);
         }
@@ -174,65 +265,7 @@
             var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
             map.openInfoWindow(infoWindow,point); //开启信息窗口
         }
-
-
-        for (var i = 0; i < employeeIdArray.length; i++) {
-            if(kindArray[i]!="bin") {
-                var moveD;
-                if(kindArray[i]=="car")
-                {
-                    moveD=Cmove();
-                }else{
-                    moveD=Pmove();
-                }
-                if(directArray[i]==true)
-                {
-                    temp=1;
-                }else {
-                    temp = -1;
-                }
-                var resultIndex=indexArray[i]+moveD*temp;
-                indexArray[i]=resultIndex;
-                if(resultIndex<=0) {
-                    resultIndex = 0;
-                    directArray[i]=!directArray[i];
-                }
-                if(resultIndex>=xSum[selectRoadsArray[i]-1].length-1){
-                    resultIndex=xSum[selectRoadsArray[i]-1].length-1;
-                    directArray[i]=!directArray[i];
-                }
-                latitudeArray[i]=ySum[selectRoadsArray[i]-1][indexArray[i]];
-                longitudeArray[i]=xSum[selectRoadsArray[i]-1][indexArray[i]];
-            }
-
-            $.ajax({
-                type: "PUT",
-                dataType: "json",//
-                url: url + "/Positions",
-                data: {
-                    employeeId: employeeIdArray[i],
-                    time: getDateTime(),
-                    longitude: longitudeArray[i],
-                    latitude: latitudeArray[i],
-                    workStatus: workStatusArray[i],
-                    bossId: bossIdArray[i],
-                    information: informationArray[i],
-                    kind: kindArray[i]
-                },
-                success: function (data) {
-                    console.log("更新成功");
-                },
-                error: function (err) {
-                    console.log("更新失败");
-                }
-            });
-        }
     }
-
-
-    getLoc();
-    setInterval("getLoc()",5000);
-
     function getDateTime() {
         var d=new Date();
         var year=d.getFullYear();
@@ -296,6 +329,91 @@
         var temp=Math.ceil(Math.random()*array.length);
         return temp;
     }
+
+    function getBins(){
+        $.ajaxSettings.async = false;
+        $.getJSON( url + "/Positions",{},function (data) {
+            for (var i = 0; i < data['data'].length; i++) {
+                employeeIdArray[i] = data['data'][i]['employeeId'];
+                timeArray[i] = data['data'][i]['time'];
+                longitudeArray[i] = data['data'][i]['longitude'];
+                latitudeArray[i] = data['data'][i]['latitude'];
+                workStatusArray[i] = data['data'][i]['workStatus'];
+                kindArray[i] = data['data'][i]['kind'];
+            }
+
+        });
+        $.ajaxSettings.async = true;
+    }
+
+    function getPersons(){
+        $.ajaxSettings.async = false;
+        $.getJSON( url + "/Positions",{},function (data) {
+            for (var i = 0; i < data['data'].length; i++) {
+                employeeIdArray[i] = data['data'][i]['employeeId'];
+                timeArray[i] = data['data'][i]['time'];
+                longitudeArray[i] = data['data'][i]['longitude'];
+                latitudeArray[i] = data['data'][i]['latitude'];
+                workStatusArray[i] = data['data'][i]['workStatus'];
+                kindArray[i] = data['data'][i]['kind'];
+            }
+
+        });
+        $.ajaxSettings.async = true;
+    }
+
+    function getCars(){
+        $.ajaxSettings.async = false;
+        $.getJSON( url + "/Cars",{},function (data) {
+            for (var i = 0; i < data['data'].length; i++) {
+                employeeIdCarsArray[i] = data['data'][i]['employeeId'];
+                carNameCarsArray[i] = data['data'][i]['carName'];
+                phoneCarsArray[i] = data['data'][i]['phone'];
+                carNumberCarsArray[i] = data['data'][i]['carNumber'];
+                carTypeCarsArray[i] = data['data'][i]['carType'];
+                kindCarsArray[i] = data['data'][i]['kind'];
+                genderCarsArray[i] = data['data'][i]['gender'];
+                ageCarsArray[i] = data['data'][i]['age'];
+                areaCarsArray[i] = data['data'][i]['area'];
+            }
+            numOfCarsTable=data['data'].length;
+        });
+        $.ajaxSettings.async = true;
+    }
+
+    function initCarsTable() {
+        getCars();
+        var table=document.getElementById("carsTable");
+        for(var i=0;i<numOfCarsTable;i++){
+            console.log(i);
+            var row=table.insertRow(table.rows.length);
+            var c1=row.insertCell(0);
+            c1.innerHTML=employeeIdArray[i];
+            var c2=row.insertCell(1);
+            c2.innerHTML=carNameCarsArray[i];
+            var c3=row.insertCell(2);
+            c3.innerHTML=phoneCarsArray[i];
+            var c4=row.insertCell(3);
+            c4.innerHTML=carNumberCarsArray[i];
+            var c5=row.insertCell(4);
+            c5.innerHTML=carTypeCarsArray[i];
+            var c6=row.insertCell(5);
+            c6.innerHTML=kindCarsArray[i];
+            var c7=row.insertCell(6);
+            c7.innerHTML=genderCarsArray[i];
+            var c8=row.insertCell(7);
+            c8.innerHTML=ageCarsArray[i];
+            var c8=row.insertCell(8);
+            c8.innerHTML=areaCarsArray[i];
+        }
+    }
+
+    function updateAll() {
+        startSimulation();
+        initCarsTable();
+    }
+
+
 </script>
 
 
