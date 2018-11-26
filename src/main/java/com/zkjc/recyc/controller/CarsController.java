@@ -41,6 +41,7 @@ public class CarsController {
         {
             return ResultGenerator.genFailResult(e.getMessage());
         }
+
         return ResultGenerator.genSuccessResult(car);
     }
 

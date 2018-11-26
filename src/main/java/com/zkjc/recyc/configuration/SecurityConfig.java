@@ -43,6 +43,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/user/form")
 //                .failureUrl("/login?error")
                 .defaultSuccessUrl("/home")
+//                .and()
+//                .rememberMe().rememberMeParameter("remember-me") //其实默认就是remember-me，这里可以指定更换
+//                .tokenValiditySeconds(31536000)
+//                .key("hongxf")
                 .and()
                 .csrf().disable();
     }
