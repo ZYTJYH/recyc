@@ -1,4 +1,4 @@
-package com.zkjc.recyc.controller;
+package com.zkjc.recyc.controller.home;
 
 
 import org.springframework.stereotype.Controller;
@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/home/carMap")
-public class CarMapController {
+@RequestMapping("/home/binMap")
+public class BinMapController {
 
     @GetMapping
-    public String carMap() {
-        return "carMap";
+    public String binMap() {
+        return "binMap";
     }
 
 }

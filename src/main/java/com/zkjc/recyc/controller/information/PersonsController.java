@@ -1,4 +1,4 @@
-package com.zkjc.recyc.controller;
+package com.zkjc.recyc.controller.information;
 
 import com.zkjc.recyc.core.Result;
 import com.zkjc.recyc.core.ResultGenerator;

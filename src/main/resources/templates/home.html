@@ -192,40 +192,40 @@
     </div>
 </div>
 <div id="buttonGroup">
-    <div class="buttonDiv">
-        <img class="buttonImage" src="./images/home/personPositions.png">
+    <div id="personPositions" onclick="goPersonMap()" class="buttonDiv">
+        <img class="buttonImage" src="./images/personPositions.png">
         <p>人员定位</p>
     </div>
-    <div class="buttonDiv">
-        <img class="buttonImage" src="./images/home/carPositions.png">
+    <div id="carPositions" onclick="goCarMap()" class="buttonDiv">
+        <img class="buttonImage" src="./images/carPositions.png">
         <p>车辆定位定位</p>
     </div>
-    <div class="buttonDiv">
-        <img class="buttonImage" src="./images/home/binPositions.png">
+    <div id="binPositions"  onclick="goBinMap()" class="buttonDiv">
+        <img class="buttonImage" src="./images/binPositions.png">
         <p>深埋桶定位</p>
     </div>
     <div class="buttonDiv">
-        <img  class="buttonImage" src="./images/home/things.png">
+        <img  class="buttonImage" src="./images/things.png">
         <p>上报事情</p>
     </div>
     <div class="buttonDiv">
-        <img  class="buttonImage" src="./images/home/conference.png">
+        <img  class="buttonImage" src="./images/conference.png">
         <p>例会列表</p>
     </div>
-    <div class="buttonDiv">
-        <img  class="buttonImage" src="./images/home/select.png">
+    <div class="buttonDiv" onclick="goSelectHistory()" >
+        <img  class="buttonImage" src="./images/select.png">
         <p>综合查询</p>
     </div>
-    <div class="buttonDiv">
-        <img  class="buttonImage" src="./images/home/input.png">
+    <div class="buttonDiv"  onclick="goAddInformation()" >
+        <img  class="buttonImage" src="./images/input.png">
         <p>信息录入</p>
     </div>
     <div class="buttonDiv">
-        <img  class="buttonImage" src="./images/home/tasks.png">
+        <img  class="buttonImage" src="./images/tasks.png">
         <p>代办任务</p>
     </div>
     <div class="buttonDiv">
-        <img  class="buttonImage" src="./images/home/yOrn.png">
+        <img  class="buttonImage" src="./images/yOrn.png">
         <p>奖惩信息</p>
     </div>
 </div>
@@ -235,7 +235,7 @@
     </div>
     <div class="news-summary">
         <div class="news-summary-main">
-            <img class="news-summary-cover" src="./images/home/welcome.jpg" alt="">
+            <img class="news-summary-cover" src="./images/welcome.jpg" alt="">
             <!--<div class="news-summary-content">-->
                 <!--<h4><a >热烈欢迎各位领带莅临光大国际新蔡县环卫指挥中心检查</a></h4>-->
                 <!--<p>   感谢您的到来   </p>-->
@@ -245,15 +245,33 @@
 </div>
 </body>
 <script>
+    function goCarMap() {
+        window.open("/home/carMap","_self");
+    }
+
+    function goBinMap() {
+        window.open("/home/binMap","_self");
+    }
+
+    function goPersonMap() {
+        window.open("/home/personMap","_self");
+    }
+    function goAddInformation(){
+        window.open("/home/addInformation","_self");
+    }
+
+    function goSelectHistory(){
+        window.open("/home/selectHistory","_self");
+    }
     new Vue({
         el: '.carousel',
         data: {
             mark: 0,
             timer: null,
-            img: ['./images/home/homeBanner_01.jpg',
-                './images/home/homeBanner_02.jpg',
-                './images/home/homeBanner_03.jpg',
-                './images/home/homeBanner_04.jpg']
+            img: ['./images/homeBanner_01.jpg',
+                './images/homeBanner_02.jpg',
+                './images/homeBanner_03.jpg',
+                './images/homeBanner_04.jpg']
         },
         created() {
             this.play()

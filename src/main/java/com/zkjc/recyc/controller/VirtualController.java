@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class VirtualController {
 
     @GetMapping
-    public String home() {
+    public String virtual()
+    {
         return "virtual";
     }
 }

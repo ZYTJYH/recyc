@@ -90,13 +90,12 @@
     </style>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=69sgiYLiR9ssKP9HqEeo4W4ig7W8hLHY"></script>
     <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
-    <script src="js/simulation.js"></script>
     <title>光大国际 智慧环卫一体化管理平台</title>
 </head>
 <body>
 <div id="all">
     <div id="banner">
-        <img id="logo" src="./images/logo.jpg"  alt="光大国际" />
+        <img id="logo" src="/images/logo.jpg"  alt="光大国际" />
         <a id="HeadTitle">光大国际 智慧环卫一体化管理平台</a>
         <nav id="nav">
             <input type=button id="addInformation" onclick="addInformation()" value="添加信息"/>
@@ -246,9 +245,9 @@
     var temperatureBinsArray=new Array();
     var numOfBinsTable;
 
-    var carIcon = new BMap.Icon("images/car.png", new BMap.Size(25, 25)) ;
-    var binIcon = new BMap.Icon("images/bin.png", new BMap.Size(25, 25)) ;
-    var personIcon = new BMap.Icon("images/person.png", new BMap.Size(25, 25)) ;
+    var carIcon = new BMap.Icon("/images/car.png", new BMap.Size(25, 25)) ;
+    var binIcon = new BMap.Icon("/images/bin.png", new BMap.Size(25, 25)) ;
+    var personIcon = new BMap.Icon("/images/person.png", new BMap.Size(25, 25)) ;
     var map = new BMap.Map("allmap");    // 创建Map实例
 
     // getPositions();
@@ -562,15 +561,9 @@
             enableMessage:true//设置允许信息窗发送短息
         };
         for(var i=0;i<tempxx;i++){
-            var icon;
-            if(kindArray[i]=="car")
-            {
-                icon=carIcon;
-            }else if(kindArray[i]=="bin")
-            {
-                icon=binIcon
-            }else{
-                icon=personIcon;
+            var icon=personIcon;
+            if(kindArray[i]!="person"){
+                continue;
             }
             var marker = new BMap.Marker(new BMap.Point(longitudeArray[i],latitudeArray[i]),{icon:icon});  // 创建标注
             var content ="hhh";

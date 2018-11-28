@@ -1,13 +1,224 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-validate="http://www.w3.org/1999/xhtml" xmlns:>
 <head>
     <meta charset="UTF-8">
     <title>录入信息</title>
+    <style>
+        /*html { height: 100%; }*/
+        body { height: 100%; background: #fff url(../images/addInformation_background.jpg) 50% 50% no-repeat; background-size: cover;}
+        hr{
+            height:1px;
+            border:none;
+            border-top:1px solid #555555;
+        }
+        .tagGroup{
+            position: relative;
+            width:100%;
+            height: 80px;
+        }
+        .tagLabel{
+            margin-left: 15px;
+            position:absolute;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            display: inline-block;
+            height: 20px;
+            width: 7px;
+            background: #4094dd;
+        }
+        .tag{
+            margin-left:30px;
+            position: center;
+            line-height: 80px;
+            display: inline-block;
+            font-size:24px;
+        }
+        label{
+            font-size: 20px;
+            display: inline;
+        }
+        .inputButton{
+            height: 40px;
+            margin-top: 10px;
+            margin-left: 15px;
+            border-radius: 10px;
+            width: 250px;
+            background: #4094dd;
+            font-size: 20px;
+            color: white;
+            opacity:0.7;
+        }
+        body{
+            height: auto;
+        }
+        .form-item{
+            margin-top: 10px;
+            margin-left: 15px;
+        }
+        .form-item input{
+            margin-left: 10px;
+            border:1px;
+            border-radius: 5px;
+            font-size: 18px;
+        }
+
+    </style>
 </head>
 <body>
-<input type="button" value="录入上级信息"/>
-<input type="button" value="录入垃圾桶信息">
-<input type="button" value="录入环卫工信息">
-<input type="button" value="录入垃圾车信息">
+<div clsss="inputGroup">
+    <div class="tagGroup">
+        <div class="tagLabel"/></div><div class="tag">上级信息</a></div>
+    </div>
+    <hr/>
+    <form    @submit.prevent="checkForm" id="Bosses" action="/information/Bosses" method="post"  novalidate="true">
+        <p v-if="errors.length">
+            <b>请修改以下错误:</b>
+        <ul>
+            <li v-for="error in errors">{{ error }}</li>
+        </ul>
+        </p>
+        <div class="form-item">
+            <label for="bossId">上司编号:</label>
+            <input maxlength="11" v-model="bossId" id="bossId" type="text" name="bossId" placeholder="11位不得与已有的重复"/>
+        </div>
+        <div class="form-item">
+            <label for="bossName">上司姓名:</label>
+            <input maxlength="20" v-model="bossName" id="bossName" type="text" name="bossName"  placeholder="最多20位"/>
+        </div>
+        <div class="form-item">
+            <label for="phone">电话号码:</label>
+            <input maxlength="11" v-model="phone" id="phone" type="text" name="phone"  placeholder="最多11位"/>
+        </div>
+        <div class="form-item">
+            <label for="kind">管理类型:</label>
+            <input  v-model="kind" id="kind" type="text" name="kind"  placeholder=""/>
+        </div>
+        <div class="form-item">
+            <label for="gender">性别:</label>
+            <input  v-model="gender" id="gender" type="text" name="gender"  placeholder=""/>
+        </div>
+        <div class="form-item">
+            <label for="age">年龄:</label>
+            <input  v-model="age" id="age" type="text" name="age"  placeholder="输入整数"/>
+        </div>
+        <div class="form-item">
+            <label for="area">地区:</label>
+            <input  v-model="area" id="area" type="text" name="area"  placeholder="地区"/>
+        </div>
+        <input class="inputButton" type="submit" value="录入" />
+    </form>
+</div>
+<br>
+<br>
+<div clsss="inputGroup">
+    <p class="tag">垃圾桶信息</p>
+    <hr/>
+    <form action="/information/Bins" method="post">
+        <div class="form-item">
+            <input type="text"  name="username" placeholder="账户"/>
+        </div>
+        <div class="form-item">
+            <input type="text" name="password"  placeholder="密码"/>
+        </div>
+        <input class="inputButton" type="button" value="录入"/>
+    </form>
+</div>
+<br>
+<br>
+<div clsss="inputGroup">
+    <p class="tag">环卫工信息</p>
+    <hr/>
+    <form action="/information/Persons" method="post">
+        <div class="form-item">
+            <input type="text"  name="username" placeholder="账户"/>
+        </div>
+        <div class="form-item">
+            <input type="text" name="password"  placeholder="密码"/>
+        </div>
+        <input class="inputButton" type="button" value="录入"/>
+    </form>
+</div>
+<br>
+<br>
+<div clsss="inputGroup">
+    <p class="tag">垃圾车信息</p>
+    <hr/>
+    <form action="/information/Cars" method="post">
+        <div class="form-item">
+            <input type="text"  name="username" placeholder="账户"/>
+        </div>
+        <div class="form-item">
+            <input type="text" name="password"  placeholder="密码"/>
+        </div>
+        <input class="inputButton" type="button" value="录入"/>
+    </form>
+</div>
+<script src="http://cdn.bootcss.com/vue/2.1.10/vue.js"></script>
+<script type="text/javascript">
+    function isNumber(str){
+        var n = Number(str);
+        if (!isNaN(n)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    new Vue({
+        el: "#Bosses",
+        data: {
+            errors: [],
+            bossId: null,
+            bossName: null,
+            phone: null,
+            kind: null,
+            gender: null,
+            age: null,
+            area: null,
+        },
+        methods:{
+            checkForm: function (e) {
+                // if (this.bossId && this.bossName&&this.phone&&this.phone&&this.kind&&this.gender&&this.age&&this.area) {
+                //     if(this.bossId.length===11&&isNumber(this.age))
+                //     {
+                //         return true;
+                //     }
+                // }
+                this.errors = [];
+
+                if (!this.bossId) {
+                    this.errors.push('缺少上司编号。');
+                }
+                if (!this.bossName) {
+                    this.errors.push('缺少上司姓名。');
+                }
+                if (!this.phone) {
+                    this.errors.push('缺少手机号。');
+                }
+                if (!this.kind) {
+                    this.errors.push('缺少种类。');
+                }
+                if (!this.gender) {
+                    this.errors.push('缺少性别');
+                }
+                if (!this.age) {
+                    this.errors.push('缺少年龄。');
+                }
+                if (!this.area) {
+                    this.errors.push('缺少地区。');
+                }
+                if(!(isNumber(this.age))){
+                    this.errors.push("年龄不是数字");
+                }
+                if(this.bossId&&!(this.bossId.length===11)){
+                    this.errors.push("上司编号不是11位");
+                }
+                if (!this.errors.length) {
+                    return true;
+                }
+                e.preventDefault();
+            }
+        }
+    })
+</script>
 </body>
 </html>
