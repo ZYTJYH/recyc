@@ -48,3 +48,9 @@ spring:
 
 mybatis:
   type-aliases-package: com.zkjc.recyc.entity
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -100,7 +100,5 @@ public class PositionsController {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
-
-
 }
 

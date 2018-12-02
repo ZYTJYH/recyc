@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=3sqEVdar1KfFmNVt41RfvUFpuRfSIWe0"></script>
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+    <link rel="stylesheet" href="/css/map.css" type="text/css"/>
+    <title>光大国际 智慧环卫一体化管理平台</title>
+</head>
+<body>
+<div id="all">
+    <div id="banner">
+        <img id="logo" src="/images/logo.jpg"  alt="光大国际" />
+        <a id="HeadTitle">光大国际 智慧环卫一体化管理平台</a>
+        <nav id="nav">
+            <input type=button id="showAll" onclick="showAll()" value="显示全部"/>
+            <input type=button id="showCar" onclick="showCar()" value="显示车"/>
+            <input type=button id="showPerson" onclick="showPerson()" value="显示人"/>
+            <input type=button id="showBin" onclick="showBin()" value="显示桶"/>
+        </nav>
+    </div>
+    <div class="container">
+        <div id="left">
+            <div id="carsInformation">
+                <center>
+                    <table id="carsTable"border="1" cellspacing="0" cellpadding="0">
+                        <caption>垃圾车</caption>
+                        <thead>
+                        <tr>
+                            <th> 姓名 </th>
+                            <th>  手机  </th>
+                            <th> 车牌 </th>
+                        </tr>
+                        </thead>
+                        <tbody id="carsTableBody">
+                        </tbody>
+                    </table>
+                </center>
+            </div>
+            <div id="personsInformation">
+                <center>
+                    <table id="personsTable"border="1" cellspacing="0" cellpadding="0">
+                        <caption>环卫工</caption>
+                        <thead>
+                        <tr>
+                            <th> 姓名 </th>
+                            <th> 手机 </th>
+                            <th> 分工 </th>
+                        </tr>
+                        </thead>
+                        <tbody id="personsTableBody">
+                        </tbody>
+                    </table>
+                </center>
+            </div>
+        </div>
+        <div id="allmap"></div>
+        <div id="right">
+            <div id="binsInformation">
+                <center>
+                    <table id="binsTable"border="1" cellspacing="0" cellpadding="0">
+                        <caption>垃圾桶</caption>
+                        <thead>
+                        <tr>
+                            <th > 地区 </th>
+                            <th > 状态 </th>
+                            <th > 温度 </th>
+                        </tr>
+                        </thead>
+                        <tbody id="binsTableBody">
+                        </tbody>
+                    </table>
+                </center>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+<script src="/js/map.js"></script>
+<script type="text/javascript">
+    initMap()
+    updateAll();
+    setInterval("updateAll()",60000);
+</script>
+</html>
+
+

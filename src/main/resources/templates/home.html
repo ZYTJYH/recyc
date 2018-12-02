@@ -192,18 +192,18 @@
     </div>
 </div>
 <div id="buttonGroup">
-    <div id="personPositions" onclick="goPersonMap()" class="buttonDiv">
+    <div id="personPositions" onclick="goMap()" class="buttonDiv">
         <img class="buttonImage" src="./images/personPositions.png">
-        <p>人员定位</p>
+        <p>定位系统</p>
     </div>
-    <div id="carPositions" onclick="goCarMap()" class="buttonDiv">
-        <img class="buttonImage" src="./images/carPositions.png">
-        <p>车辆定位定位</p>
-    </div>
-    <div id="binPositions"  onclick="goBinMap()" class="buttonDiv">
-        <img class="buttonImage" src="./images/binPositions.png">
-        <p>深埋桶定位</p>
-    </div>
+    <!--<div id="carPositions" onclick="goCarMap()" class="buttonDiv">-->
+        <!--<img class="buttonImage" src="./images/carPositions.png">-->
+        <!--<p>车辆定位定位</p>-->
+    <!--</div>-->
+    <!--<div id="binPositions"  onclick="goBinMap()" class="buttonDiv">-->
+        <!--<img class="buttonImage" src="./images/binPositions.png">-->
+        <!--<p>深埋桶定位</p>-->
+    <!--</div>-->
     <div class="buttonDiv">
         <img  class="buttonImage" src="./images/things.png">
         <p>上报事情</p>
@@ -245,16 +245,8 @@
 </div>
 </body>
 <script>
-    function goCarMap() {
-        window.open("/home/carMap","_self");
-    }
-
-    function goBinMap() {
-        window.open("/home/binMap","_self");
-    }
-
-    function goPersonMap() {
-        window.open("/home/personMap","_self");
+    function goMap() {
+        window.open("/home/map","_self");
     }
     function goAddInformation(){
         window.open("/home/addInformation","_self");

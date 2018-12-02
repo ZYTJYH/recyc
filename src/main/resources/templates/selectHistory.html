@@ -1,11 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>查询历史记录</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=3sqEVdar1KfFmNVt41RfvUFpuRfSIWe0"></script>
+    <script src="http://libs.baidu.com/jquery/1.9.0/jquery.js"></script>
+    <style>
+        .banner{
+            width: 100%;
+        }
+        .navItem{
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        nav{
+            margin-top: 30px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
+        }
+        #allmap{
+            margin-top: 10px;
+            width: 100%;
+            height: 850px;
+        }
+    </style>
+    <title>光大国际 智慧环卫一体化管理平台</title>
 </head>
 <body>
-<input type="button" value="查询"/>
-<input type="button" value="查询"/>
+<div id="all">
+    <div class="banner">
+        <nav id="nav">
+            <select class="navItem" id="tableKind" onchange="getTable()">
+                <option value="车">车</option>
+                <option value="人">人</option>
+            </select>
+            <select class="navItem" id="employeeId">
+            </select>
+            <input class="navItem" type=text id="startDay" placeholder="请按照格式 2018-01-01 00:00:00"/>
+            <input class="navItem" type=text id="endDay"  placeholder="请按照格式 2018-01-01 00:00:00"/>
+            <input class="navItem" type=button id="showBin" onclick="showTrace()" value="显示路径"/>
+        </nav>
+    </div>
+    <div id="allmap"></div>
+</div>
 </body>
+<script src="/js/map.js"></script>
+<script type="text/javascript">
+    function format(date) {
+        var y = date.getFullYear();
+        var m = date.getMonth() + 1;
+        m = m < 10 ? ('0' + m) : m;
+        var d = date.getDate();
+        d = d < 10 ? ('0' + d) : d;
+        var h = date.getHours();
+        h=h < 10 ? ('0' + h) : h;
+        var minute = date.getMinutes();
+        minute = minute < 10 ? ('0' + minute) : minute;
+        var second=date.getSeconds();
+        second=second < 10 ? ('0' + second) : second;
+        return y + '-' + m + '-' + d+' '+h+':'+minute+':'+second;
+    };
+    var d=new Date()
+    document.getElementById("startDay").value= (format(new Date(d.getFullYear(),d.getMonth(),d.getDay()+2)))
+    document.getElementById("endDay").value= (format(new Date(d.getFullYear(),d.getMonth(),d.getDay()+2,23,59,59)))
+    initMap()
+    getTable()
+    var icon;
+    var storeLongitudeArray=new Array();
+    var storeLatitudeArray=new Array();
+    var cnt=0;
+    var chance;
+    function showTrace() {
+        $.ajaxSettings.async = false;
+        var params = {};
+        params['startDay'] = document.getElementById('startDay').value;
+        params['endDay'] = document.getElementById('endDay').value;
+        console.log(params)
+        var employeeId=$("#employeeId").find("option:selected").text().substring(0,11);
+        $.getJSON(url + "/Stores/"+employeeId, params, function (data) {
+            var jsonStr=JSON.stringify(data['data'])
+            console.log(jsonStr)
+            for(var i=0;i<data['data'].length;i++) {
+                storeLongitudeArray[i] = data['data'][i]['longitude'];
+                storeLatitudeArray[i] = data['data'][i]['latitude'];
+            }
+        });
+        $.ajaxSettings.async = true;
+        map.clearOverlays();
+        cnt=0
+        chance=setInterval(goNext,500);
+    }
+
+    function goNext() {
+        cnt++;
+        if(cnt==storeLatitudeArray.length)
+        {
+            clearInterval(iCount);
+        }
+        var marker = new BMap.Marker(new BMap.Point(storeLongitudeArray[cnt], storeLatitudeArray[cnt]), {icon: icon});  // 创建标注
+        map.addOverlay(marker);
+    }
+    function getTable() {
+        $("#employeeId").children().remove();
+        var length;
+        var kind;
+        if($("#tableKind").find("option:selected").text()=="车")
+        {
+            getCars();
+            length=kindCarsArray.length;
+            kind=1;
+            icon=carIcon;
+        }else
+        {
+            getPersons();
+            length=personNamePersonArray.length;
+            kind=2;
+            icon=personIcon;
+        }
+        var employeeIds = document.getElementById("employeeId");
+        for (var i = 0; i <length; i++) {
+            var opt = document.createElement("option");
+            if(kind==1) {
+                opt.innerHTML =employeeIdCarsArray[i]+" "+carNameCarsArray[i];
+            }else{
+                opt.innerHTML =employeeIdPersonsArray[i]+" "+personNamePersonArray[i];
+            }
+            employeeIds.appendChild(opt);
+        }
+    }
+</script>
+
 </html>
+
+

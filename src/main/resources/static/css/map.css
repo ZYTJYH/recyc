@@ -1,0 +1,80 @@
+body, html,#allmap {width: 100%;height: 100%;overflow: hidden;margin:0;font-family:"微软雅黑";}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+}
+
+#left, #right, #allmap {
+    margin: 0px;
+}
+
+#left{
+    display: grid;
+    grid-template-rows: 425px 425px;
+}
+#right{
+    display: grid;
+    grid-template-rows:850px;
+}
+#carsInformation,#personsInformation,#binsInformation{
+    overflow:auto;
+    align:center;
+}
+#personsInformation{
+    margin-top: 10px;
+}
+
+
+
+#carsTable,#personsTable,#binsTable{
+    cellpadding:10;
+    border:1px solid gray;
+    border-collapse:collapse;
+}
+th{
+    background-color:lightgray;
+    font-size: 17px;
+    width:80px;
+}
+td{
+    font-size: 17px;
+    text-align:center;
+}
+body{
+    background: #fff url(../images/home_background.jpg) 50% 50% no-repeat; background-size: cover;
+}
+
+#banner{
+    background-color: white;
+    text-align:center;
+    width: 100%;
+    position: relative;
+    display:grid;
+    grid-template-columns: 1fr 3fr 1fr;
+}
+
+#logo{
+    margin:10px;
+}
+#nav{
+    line-height: 78px;
+    display:inline;
+}
+#all{
+    display: block;
+}
+caption{
+    background-color: aquamarine;
+}
+#HeadTitle {
+    line-height: 78px;
+    text-align: center;
+    z-index:999;
+    font-size:40px;
+    font-family: 华文行楷;
+}
+input{
+    font-size: 18px;
+}
+

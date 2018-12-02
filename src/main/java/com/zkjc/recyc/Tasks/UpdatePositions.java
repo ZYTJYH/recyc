@@ -6,6 +6,7 @@ import com.zkjc.recyc.entity.PositionEntity;
 import com.zkjc.recyc.enums.EmployeeKindEnum;
 import com.zkjc.recyc.enums.EmployeeStatusEnum;
 import com.zkjc.recyc.mapper.PositionsMapper;
+import com.zkjc.recyc.mapper.StoresMapper;
 import com.zkjc.recyc.service.GetPositionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,14 +24,17 @@ public class UpdatePositions {
     private GetPositionsService getPositionsService;
     @Autowired
     private PositionsMapper positionsMapper;
-//    @Scheduled(cron = "0 0/1 * * * ?")
-    @Scheduled(cron ="0/10 * * * * ?")
+    @Autowired
+    private StoresMapper storesMapper;
+    @Scheduled(cron = "0 0/1 * * * ?")
+//    @Scheduled(cron ="0/10 * * * * ?")
     public void doTask(){
         System.out.println("执行了MyStaticTask,时间为:"+new Date(System.currentTimeMillis()));
         List<PositionEntity> list=parseJson(getPositionsService.getPositions());
         for(int i=0;i<list.size();i++)
         {
             PositionEntity positionEntity=list.get(i);
+            storesMapper.insert(positionEntity);
             if(positionsMapper.getOne(positionEntity.getEmployeeId())!=null)
             {
                 positionsMapper.update(positionEntity);
@@ -47,6 +51,10 @@ public class UpdatePositions {
         for (int i = 0; i < jsonArray.size(); i++) {
             JSONObject job = jsonArray.getJSONObject(i);
             String employeeId = job.getString("SN");
+            if(employeeId.length()!=11)
+            {
+                employeeId="0"+employeeId;
+            }
             String updateTime = job.getString("GTime").replace('T', ' ');
 //                        String[] strings=updateTime.split("T");
 //                        updateTime=strings[0]+"%20"+strings[1];

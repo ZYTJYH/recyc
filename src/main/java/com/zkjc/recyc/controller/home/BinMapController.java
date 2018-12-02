@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/home/binMap")
+@RequestMapping("/home/map")
 public class BinMapController {
 
     @GetMapping
-    public String binMap() {
-        return "binMap";
+    public String map() {
+        return "map";
     }
 
 }
