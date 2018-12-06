@@ -50,7 +50,7 @@ public class JWTAuthenticationFilter extends BasicAuthenticationFilter {
         try {
             user = Jwts.parser()
                     .setSigningKey(ConstantKey.SIGNING_KEY)
-                    .parseClaimsJws(token.substring(0,token.replace("Bearer ", "").indexOf(";")))
+                    .parseClaimsJws(token.replace("Bearer ", ""))
                     .getBody()
                     .getSubject();
             long end = System.currentTimeMillis();

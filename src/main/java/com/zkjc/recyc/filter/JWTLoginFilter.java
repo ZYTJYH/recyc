@@ -32,6 +32,10 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws AuthenticationException {
         try {
             UserEntity user = new ObjectMapper().readValue(req.getInputStream(), UserEntity.class);
+            System.out.println(authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(
+                    user.getUsername(),
+                    user.getPassword(),
+                    new ArrayList<>())));
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             user.getUsername(),
@@ -61,7 +65,7 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
             // 设置过期时间
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
-            calendar.add(Calendar.DAY_OF_MONTH, 30);
+            calendar.add(Calendar.DAY_OF_MONTH, 365);
             Date time = calendar.getTime();
             token = Jwts.builder()
                     .setSubject(auth.getName() + "-" + roleList)
@@ -70,7 +74,7 @@ public class JWTLoginFilter extends UsernamePasswordAuthenticationFilter {
                     .compact();
             // 登录成功后，返回token到header里面
 //            response.addHeader("Authorization", "Bearer " + token);
-            response.addHeader("Set-Cookie","Bearer "+token+"; Path=/; HttpOnly");
+            response.addHeader("Authorization","Bearer "+token);
         } catch (Exception e) {
             e.printStackTrace();
         }

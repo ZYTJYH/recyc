@@ -13,6 +13,7 @@ var kindArray=new Array();
 var numofPositions;
 var tempxx;
 
+
 //Cars表
 var employeeIdCarsArray=new Array();
 var carNameCarsArray=new Array();
@@ -61,6 +62,9 @@ var buttonFlag=0;//0:全部，1:车；2:人；3：桶
 // setInterval("updateAll()",5000);
 
 function initMap(){
+    // getPositions();
+    // getCars();
+    // getBins();
     // 百度地图API功能
     map.centerAndZoom(new BMap.Point(114.987,32.754), 16);  // 初始化地图,设置中心点坐标和地图级别
     // map.centerAndZoom(new BMap.Point(117.193267, 31.77408), 16);
@@ -245,7 +249,7 @@ function updateMap(){
     getPositions();
     var opts = {
         width : 300,     // 信息窗口宽度
-        height: 200,     // 信息窗口高度
+        height: 250,     // 信息窗口高度
         title : "详细信息" , // 信息窗口标题
         enableMessage:true//设置允许信息窗发送短息
     };
@@ -288,6 +292,7 @@ function updateMap(){
         var marker = new BMap.Marker(new BMap.Point(longitudeArray[i],latitudeArray[i]),{icon:icon});  // 创建标注
         var content;
         var areaContent;
+
         areaContent=gc.getLocation(new BMap.Point(longitudeArray[i],latitudeArray[i]), function(rs){
             var addComp = rs.addressComponents;
             return(addComp.district + ", " + addComp.street + ", " + addComp.streetNumber);
@@ -295,12 +300,63 @@ function updateMap(){
         content=content+areaContent;
         if(kindArray[i]=="car")
         {
-            content=getCar(employeeIdArray[i])
+            var result=getCar(employeeIdArray[i])
+            var labelstr="0-25"
+            content=result.windowInfo
+            if(result.label!=undefined)
+            labelstr=result.label
+            var label = new BMap.Label(labelstr, {
+                offset: new BMap.Size(-15, 20)
+            }); //创建marker点的标记,这里注意下,因为百度地图可以对label样式做编辑,
+            label.setStyle({
+                width: "auto",
+                background: '#ffffff',
+                border: '1px solid "#ff8355"',
+                borderRadius: "5px",
+                textAlign: "center",
+                height: "auto",
+                fontSize: "5px"
+            }); //对label 样式隐藏
+            marker.setLabel(label); //把label设置到maker上
         }else if(kindArray[i]=="bin")
         {
-            content=getBin(employeeIdArray[i])
+            var result=getBin(employeeIdArray[i])
+            content=result.windowInfo
+            var labelstr="数据未录入"
+            if(result.label!=undefined)
+            labelstr=result.label
+            var label = new BMap.Label(labelstr, {
+                offset: new BMap.Size(-15, 20)
+            }); //创建marker点的标记,这里注意下,因为百度地图可以对label样式做编辑,
+            label.setStyle({
+                width: "auto",
+                background: '#ffffff',
+                border: '1px solid "#ff8355"',
+                borderRadius: "5px",
+                textAlign: "center",
+                height: "auto",
+                fontSize:"16px"
+        }); //对label 样式隐藏
+            marker.setLabel(label); //把label设置到maker上
         }else{
-            content=getPerson(employeeIdArray[i])
+            var result=getPerson(employeeIdArray[i])
+            content=result.windowInfo
+            var labelstr="数据未录入"
+            if(result.label!=undefined)
+            labelstr=result.label
+            var label = new BMap.Label(labelstr, {
+                offset: new BMap.Size(-15, 20)
+            }); //创建marker点的标记,这里注意下,因为百度地图可以对label样式做编辑,
+            label.setStyle({
+                width: "auto",
+                background: '#ffffff',
+                border: '1px solid "#ff8355"',
+                borderRadius: "5px",
+                textAlign: "center",
+                height: "auto",
+                fontSize: "5px"
+            }); //对label 样式隐藏
+            marker.setLabel(label); //把label设置到maker上
         }
         map.addOverlay(marker);               // 将标注添加到地图中
         addClickHandler(content,marker);
@@ -335,7 +391,7 @@ function getPositions() {
 
 function getCar(employeeId) {
     $.ajaxSettings.async = false;
-    var result;
+    var result={};
     $.getJSON( url + "/Cars/"+employeeId,{},function (data) {
         var jsonStr=JSON.stringify(data['data'])
         if(jsonStr==null)
@@ -343,21 +399,25 @@ function getCar(employeeId) {
             return result="数据未录入";
         }
         var carObject = JSON.parse(jsonStr)
-        result=carObject.carName+"<br/>"+data['data']['phone']+"<br/>"+data['data']['carNumber']+"<br/>"+data['data']['carType']+"<br/>"+data['data']['kind']+"<br/>"+data['data']['gender']+"<br/>"+data['data']['age']+"<br/>"+data['data']['area']+"<br/>";
+        result.windowInfo=carObject.carName+"<br/>"+data['data']['phone']+"<br/>"+data['data']['carNumber']+"<br/>"+data['data']['carType']+"<br/>"+data['data']['kind']+"<br/>"+data['data']['gender']+"<br/>"+data['data']['age']+"<br/>"+data['data']['area']+"<br/>"+ '<input type="button" value="回放"  onclick="showTrace('+data['data']['employeeId']+')"/> ' ;
+        result.label=data['data']['carNumber'];
     });
     $.ajaxSettings.async = true;
     return result;
 }
 
+
 function getPerson(employeeId) {
     $.ajaxSettings.async = false;
-    var result;
+    var result={};
     $.getJSON( url + "/Persons/"+employeeId,{},function (data) {
         var jsonStr=JSON.stringify(data['data'])
         if(jsonStr==null) {
             return result = "数据未录入";
         }
-        result= data['data']['personName']+"<br/>"+data['data']['phone']+"<br/>"+data['data']['kind']+"<br/>"+data['data']['job'];
+        result.windowInfo= data['data']['personName']+"<br/>"+data['data']['phone']+"<br/>"+data['data']['kind']+"<br/>"+data['data']['job']+"<br/>"+ '<input type="button" value="回放"  onclick="showTrace('+data['data']['employeeId']+')"/> ' ;
+        ;
+        result.label=data['data']['personName'];
     });
     $.ajaxSettings.async = true;
     return result;
@@ -365,15 +425,15 @@ function getPerson(employeeId) {
 
 function getBin(employeeId) {
     $.ajaxSettings.async = false;
-    var result;
+    var result={};
     $.getJSON( url + "/Bins/"+employeeId,{},function (data) {
         var jsonStr=JSON.stringify(data['data'])
         if(jsonStr==null) {
             return result = "数据未录入";
         }
-        result=data['data']['binName']+"<br/>"+data['data']['currentV']+"<br/>"+data['data']['maxV']+"<br/>"+data['data']['temperature']+"<br/>"+data['data']['area']
+        result.windowInfo=data['data']['binName']+"<br/>"+data['data']['currentV']+"<br/>"+data['data']['maxV']+"<br/>"+data['data']['temperature']+"<br/>"+data['data']['area']
+        result.label=data['data']['binName'];
     });
-    return result;
     $.ajaxSettings.async = true;
     return result;
 }
@@ -422,4 +482,127 @@ function getPosition(employeeId){
     });
     $.ajaxSettings.async = true;
     return location;
+}
+
+var icon;
+var storeLongitudeArray=new Array();
+var storeLatitudeArray=new Array();
+var cnt=0;
+function showTrace(employeeId) {
+    $.ajaxSettings.async = false;
+    var params = {};
+    var d=new Date()
+    params['startDay'] =  (format(new Date(d.getFullYear(),d.getMonth(),d.getDay()+2)))
+    params['endDay'] = (format(new Date(d.getFullYear(),d.getMonth(),d.getDay()+2,23,59,59)))
+    $.getJSON(url + "/Stores/"+employeeId, params, function (data) {
+        var jsonStr=JSON.stringify(data['data'])
+        for(var i=0;i<data['data'].length;i++) {
+            storeLongitudeArray[i] = data['data'][i]['longitude'];
+            storeLatitudeArray[i] = data['data'][i]['latitude'];
+        }
+    });
+    $.ajaxSettings.async = true;
+    // map.clearOverlays();
+    console.log(storeLongitudeArray)
+    var temp=uniquePositions(storeLongitudeArray,storeLatitudeArray)
+    console.log(temp[0])
+    console.log(temp[1])
+    if(temp[0].length==0)
+    {
+        alert("无轨迹资料")
+        return;
+    }
+    arrPoints=new Array();
+    for(var i=0;i<temp.length;i++)
+    {
+        arrPoints[i]=(new BMap.Point(temp[0][i],temp[1][i]))
+    }
+    //执行方法
+    cnt = 0;
+    console.log(arrPoints[0])
+    var startMkr = new BMap.Marker(arrPoints[0]);
+    map.addOverlay(startMkr); //标点
+    var endMkr=new BMap.Marker(arrPoints[arrPoints.length-1])
+    map.addOverlay(endMkr); //标点
+    var startlabel = new BMap.Label("起点", {
+        offset: new BMap.Size(-15, 20)
+    }); //创建marker点的标记,这里注意下,因为百度地图可以对label样式做编辑,
+    startlabel.setStyle({
+        width: "auto",
+        background: '#ffffff',
+        border: '1px solid "#ff8355"',
+        borderRadius: "5px",
+        textAlign: "center",
+        height: "auto",
+        fontSize: "5px"
+    }); //对label 样式隐藏
+    startMkr.setLabel(startlabel); //把label设置到maker上
+    var endlabel = new BMap.Label("终点", {
+        offset: new BMap.Size(-15, 20)
+    }); //创建marker点的标记,这里注意下,因为百度地图可以对label样式做编辑,
+    startlabel.setStyle({
+        width: "auto",
+        background: '#ffffff',
+        border: '1px solid "#ff8355"',
+        borderRadius: "5px",
+        textAlign: "center",
+        height: "auto",
+        fontSize: "5px"
+    }); //对label 样式隐藏
+    endMkr.setLabel(startlabel); //把label设置到maker上
+
+
+
+    points = [];
+    dynamicLine()
+    // chance=setInterval(goNext,500);
+}
+
+
+function driveline(points) {
+    map.addOverlay(new BMap.Polyline(points, {
+        strokeColor: "green",
+        strokeWeight: 1,
+        strokeOpacity: 1
+    }));
+}
+
+function dynamicLine() {
+    if (cnt == arrPoints.length) return;
+    // var mkr = new BMap.Marker(arrPoints[cnt]);
+    // map.addOverlay(mkr); //标点
+    points.push(arrPoints[cnt]);
+    driveline(points);
+    cnt++;
+    setTimeout(dynamicLine, 100);
+}
+
+function format(date) {
+    var y = date.getFullYear();
+    var m = date.getMonth() + 1;
+    m = m < 10 ? ('0' + m) : m;
+    var d = date.getDate();
+    d = d < 10 ? ('0' + d) : d;
+    var h = date.getHours();
+    h = h < 10 ? ('0' + h) : h;
+    var minute = date.getMinutes();
+    minute = minute < 10 ? ('0' + minute) : minute;
+    var second = date.getSeconds();
+    second = second < 10 ? ('0' + second) : second;
+    return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second;
+}
+
+function uniquePositions(lo,la){
+    var nlo=new Array();
+    var nla=new Array();
+    for(var i = 0; i < lo.length-1; i++){
+        if(lo[i]!=lo[i+1]||la[i]!=la[i+1]){
+            nlo.push(lo[i]);
+            nla.push(la[i]);
+        }
+    }
+    nlo.push(lo[lo.length-1])
+    nla.push(la[la.length-1])
+    var pos=[nlo,nla]
+    return pos;
 }

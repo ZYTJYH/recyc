@@ -48,6 +48,9 @@
 </body>
 <script src="/js/map.js"></script>
 <script type="text/javascript">
+    var cnt;
+    var points;
+    var arrPoints;
     function format(date) {
         var y = date.getFullYear();
         var m = date.getMonth() + 1;
@@ -71,7 +74,6 @@
     var storeLongitudeArray=new Array();
     var storeLatitudeArray=new Array();
     var cnt=0;
-    var chance;
     function showTrace() {
         $.ajaxSettings.async = false;
         var params = {};
@@ -89,19 +91,18 @@
         });
         $.ajaxSettings.async = true;
         map.clearOverlays();
-        cnt=0
-        chance=setInterval(goNext,500);
+        arrPoints=new Array();
+        for(var i=0;i<storeLatitudeArray.length;i++)
+        {
+            arrPoints[i]=(new BMap.Point(storeLongitudeArray[i],storeLatitudeArray[i]))
+        }
+        //执行方法
+        cnt = 0;
+        points = [];
+        dynamicLine()
+        // chance=setInterval(goNext,500);
     }
 
-    function goNext() {
-        cnt++;
-        if(cnt==storeLatitudeArray.length)
-        {
-            clearInterval(iCount);
-        }
-        var marker = new BMap.Marker(new BMap.Point(storeLongitudeArray[cnt], storeLatitudeArray[cnt]), {icon: icon});  // 创建标注
-        map.addOverlay(marker);
-    }
     function getTable() {
         $("#employeeId").children().remove();
         var length;
@@ -129,6 +130,24 @@
             }
             employeeIds.appendChild(opt);
         }
+    }
+
+    function driveline(points) {
+        map.addOverlay(new BMap.Polyline(points, {
+            strokeColor: "green",
+            strokeWeight: 5,
+            strokeOpacity: 1
+        }));
+    }
+
+    function dynamicLine() {
+        if (cnt == arrPoints.length) return;
+        // var mkr = new BMap.Marker(arrPoints[cnt]);
+        // map.addOverlay(mkr); //标点
+        points.push(arrPoints[cnt]);
+        driveline(points);
+        cnt++;
+        setTimeout(dynamicLine, 100);
     }
 </script>
 

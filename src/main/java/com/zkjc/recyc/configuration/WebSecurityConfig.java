@@ -71,8 +71,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .successForwardUrl("/home")
-                .loginProcessingUrl("/user/form");
+                .successForwardUrl("/home");
+//                .loginProcessingUrl("/user/form");
     }
 
 
