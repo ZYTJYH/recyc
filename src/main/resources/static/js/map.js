@@ -1,17 +1,11 @@
-var url="http://47.105.166.205:8080/information"
-// var url="http://localhost:8080/information"
+// var url="http://47.105.166.205:8080/information"
+var url="http://localhost:8080/information"
 //
 
 
-//Posistions表
-var employeeIdArray=new Array();
-var timeArray=new Array();
-var longitudeArray=new Array();
-var latitudeArray=new Array();
-var workStatusArray=new Array();
-var kindArray=new Array();
-var numofPositions;
-var tempxx;
+
+var objPositionArray=new Array();
+
 
 
 //Cars表
@@ -55,8 +49,6 @@ var personIcon = new BMap.Icon("/images/person.png", new BMap.Size(25, 25)) ;
   // 创建Map实例
 var map = new BMap.Map("allmap");    // 创建Map实例
 var gc = new BMap.Geocoder();
-
-var buttonFlag=0;//0:全部，1:车；2:人；3：桶
 
 // updateAll();
 // setInterval("updateAll()",5000);
@@ -245,146 +237,194 @@ function updateBinsTable() {
     }
 }
 
-function updateMap(){
-    getPositions();
-    var opts = {
-        width : 300,     // 信息窗口宽度
-        height: 250,     // 信息窗口高度
-        title : "详细信息" , // 信息窗口标题
-        enableMessage:true//设置允许信息窗发送短息
-    };
-    for(var i=0;i<tempxx;i++){
-        var icon;
-        switch (buttonFlag) {
-            case 0:
-                if(kindArray[i]=="car")
-                {
-                    icon=carIcon;
-                }else if(kindArray[i]=="bin")
-                {
-                    icon=binIcon
-                }else{
-                    icon=personIcon;
-                }
-                break;
-            case 1:
-                if(kindArray[i]!="car")
-                {
-                    continue;
-                }
-                icon=carIcon;
-                break;
-            case 2:
-                if(kindArray[i]!="person")
-                {
-                    continue;
-                }
-                icon=personIcon;
-                break;
-            case 3:
-                if(kindArray[i]!="bin")
-                {
-                    continue;
-                }
-                icon=binIcon;
-                break;
-        }
-        var marker = new BMap.Marker(new BMap.Point(longitudeArray[i],latitudeArray[i]),{icon:icon});  // 创建标注
-        var content;
-        var areaContent;
+var opts = {
+    width : 300,     // 信息窗口宽度
+    height: 250,     // 信息窗口高度
+    title : "详细信息" , // 信息窗口标题
+    enableMessage:true//设置允许信息窗发送短息
+};
 
-        areaContent=gc.getLocation(new BMap.Point(longitudeArray[i],latitudeArray[i]), function(rs){
-            var addComp = rs.addressComponents;
-            return(addComp.district + ", " + addComp.street + ", " + addComp.streetNumber);
-        });
-        content=content+areaContent;
-        if(kindArray[i]=="car")
-        {
-            var result=getCar(employeeIdArray[i])
-            var labelstr="0-25"
-            content=result.windowInfo
-            if(result.label!=undefined)
-            labelstr=result.label
-            var label = new BMap.Label(labelstr, {
-                offset: new BMap.Size(-15, 20)
-            }); //创建marker点的标记,这里注意下,因为百度地图可以对label样式做编辑,
-            label.setStyle({
-                width: "auto",
-                background: '#ffffff',
-                border: '1px solid "#ff8355"',
-                borderRadius: "5px",
-                textAlign: "center",
-                height: "auto",
-                fontSize: "5px"
-            }); //对label 样式隐藏
-            marker.setLabel(label); //把label设置到maker上
-        }else if(kindArray[i]=="bin")
-        {
-            var result=getBin(employeeIdArray[i])
-            content=result.windowInfo
-            var labelstr="数据未录入"
-            if(result.label!=undefined)
-            labelstr=result.label
-            var label = new BMap.Label(labelstr, {
-                offset: new BMap.Size(-15, 20)
-            }); //创建marker点的标记,这里注意下,因为百度地图可以对label样式做编辑,
-            label.setStyle({
-                width: "auto",
-                background: '#ffffff',
-                border: '1px solid "#ff8355"',
-                borderRadius: "5px",
-                textAlign: "center",
-                height: "auto",
-                fontSize:"16px"
-        }); //对label 样式隐藏
-            marker.setLabel(label); //把label设置到maker上
-        }else{
-            var result=getPerson(employeeIdArray[i])
-            content=result.windowInfo
-            var labelstr="数据未录入"
-            if(result.label!=undefined)
-            labelstr=result.label
-            var label = new BMap.Label(labelstr, {
-                offset: new BMap.Size(-15, 20)
-            }); //创建marker点的标记,这里注意下,因为百度地图可以对label样式做编辑,
-            label.setStyle({
-                width: "auto",
-                background: '#ffffff',
-                border: '1px solid "#ff8355"',
-                borderRadius: "5px",
-                textAlign: "center",
-                height: "auto",
-                fontSize: "5px"
-            }); //对label 样式隐藏
-            marker.setLabel(label); //把label设置到maker上
-        }
-        map.addOverlay(marker);               // 将标注添加到地图中
-        addClickHandler(content,marker);
-    }
-    function addClickHandler(content,marker){
-        marker.addEventListener("click",function(e){
-            openInfo(content,e)}
-        );
-    }
-    function openInfo(content,e){
-        var p = e.target;
-        var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
-        var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
-        map.openInfoWindow(infoWindow,point); //开启信息窗口
-    }
+var buttonFlag=0;//0:全部，1:车；2:人；3：桶
+ObjMarker={
+    employeeId:"",
+    marker:"",
 }
+var objMarkers=new Array();
+var Timer1s;
+var sumCount=0;
+var sixityCount=0;
+var icon;
+function updateMap() {
+    window.clearTimeout(Timer1s);
+    map.clearOverlays();
+    getPositions();
+    var label;
+    switch (buttonFlag) {
+        case 0:
+            for (var i = 0; i < objPositionArray.length; i++) {
+                if (objPositionArray[i].kind == "car") {
+                    icon = carIcon;
+                } else if (objPositionArray[i].kind = "bin") {
+                    icon = binIcon;
+                } else {
+                    icon = personIcon;
+                }
+                if(sumCount==0) {
+                    var marker = new BMap.Marker(new BMap.Point(objPositionArray[i].longitudeArray[0],objPositionArray[i].latitudeArray[0]), {icon: icon});  // 创建标注
+                    map.addOverlay(marker);
+                }
+            }
+            if(sumCount!=0){
+                sixityCount=0;
+                updateInOneS()
+                Timer1s=setInterval(updateInOneS,1000)
+            }
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+    }
+    sumCount++;
+}
+
+function updateInOneS(){
+    icon=carIcon;
+    map.clearOverlays();
+    for(var i=0;i<objPositionArray.length;i++) {
+        var tempLo=objPositionArray[i].longitudeArray[sumCount-2]+(objPositionArray[i].longitudeArray[sumCount-1] - objPositionArray[i].longitudeArray[sumCount -2])/60.0*sixityCount;
+        var tempLa=objPositionArray[i].latitudeArray[sumCount-2]+(objPositionArray[i].latitudeArray[sumCount-1]-objPositionArray[i].latitudeArray[sumCount-2])/60.0*sixityCount;
+        var marker = new BMap.Marker(new BMap.Point(tempLo,tempLa), {icon: icon});  // 创建标注
+        map.addOverlay(marker);
+    }
+    sixityCount++;
+}
+
+//
+//     for(var i=0;i<objPositionArray.size;i++){
+//         var icon;
+//
+//         var marker = new BMap.Marker(new BMap.Point(longitudeArray[i],latitudeArray[i]),{icon:icon});  // 创建标注
+//         var content;
+//         if(kindArray[i]=="car")
+//         {
+//             var result=getCar(employeeIdArray[i])
+//             var labelstr="0-25"
+//             content=result.windowInfo
+//             if(result.label!=undefined)
+//             labelstr=result.label
+//             var label = new BMap.Label(labelstr, {
+//                 offset: new BMap.Size(-15, 20)
+//             }); //创建marker点的标记,这里注意下,因为百度地图可以对label样式做编辑,
+//             label.setStyle({
+//                 width: "auto",
+//                 background: '#ffffff',
+//                 border: '1px solid "#ff8355"',
+//                 borderRadius: "5px",
+//                 textAlign: "center",
+//                 height: "auto",
+//                 fontSize: "5px"
+//             }); //对label 样式隐藏
+//             marker.setLabel(label); //把label设置到maker上
+//         }else if(kindArray[i]=="bin")
+//         {
+//             var result=getBin(employeeIdArray[i])
+//             content=result.windowInfo
+//             var labelstr="数据未录入"
+//             if(result.label!=undefined)
+//             labelstr=result.label
+//             var label = new BMap.Label(labelstr, {
+//                 offset: new BMap.Size(-15, 20)
+//             }); //创建marker点的标记,这里注意下,因为百度地图可以对label样式做编辑,
+//             label.setStyle({
+//                 width: "auto",
+//                 background: '#ffffff',
+//                 border: '1px solid "#ff8355"',
+//                 borderRadius: "5px",
+//                 textAlign: "center",
+//                 height: "auto",
+//                 fontSize:"16px"
+//         }); //对label 样式隐藏
+//             marker.setLabel(label); //把label设置到maker上
+//         }else{
+//             var result=getPerson(employeeIdArray[i])
+//             content=result.windowInfo
+//             var labelstr="数据未录入"
+//             if(result.label!=undefined)
+//             labelstr=result.label
+//             var label = new BMap.Label(labelstr, {
+//                 offset: new BMap.Size(-15, 20)
+//             }); //创建marker点的标记,这里注意下,因为百度地图可以对label样式做编辑,
+//             label.setStyle({
+//                 width: "auto",
+//                 background: '#ffffff',
+//                 border: '1px solid "#ff8355"',
+//                 borderRadius: "5px",
+//                 textAlign: "center",
+//                 height: "auto",
+//                 fontSize: "5px"
+//             }); //对label 样式隐藏
+//             marker.setLabel(label); //把label设置到maker上
+//         }         // 将标注添加到地图中
+//         addClickHandler(content,marker);
+//     }
+//
+// }
+function addClickHandler(content,marker){
+    marker.addEventListener("click",function(e){
+        openInfo(content,e)}
+    );
+}
+function openInfo(content,e){
+    var p = e.target;
+    var point = new BMap.Point(p.getPosition().lng, p.getPosition().lat);
+    var infoWindow = new BMap.InfoWindow(content,opts);  // 创建信息窗口对象
+    map.openInfoWindow(infoWindow,point); //开启信息窗口
+}
+
 function getPositions() {
     $.ajaxSettings.async = false;
     $.getJSON( url + "/Positions",{},function (data) {
-        for (var i = 0; i < data['data'].length; i++) {
-            employeeIdArray[i] = data['data'][i]['employeeId'];
-            timeArray[i] = data['data'][i]['updateTime'];
-            longitudeArray[i] = data['data'][i]['longitude'];
-            latitudeArray[i] = data['data'][i]['latitude'];
-            workStatusArray[i] = data['data'][i]['workStatus'];
-            kindArray[i] = data['data'][i]['kind'];
-        }
-        tempxx=data['data'].length;
+            if(objPositionArray.length==0) {
+                for (var i = 0; i < data['data'].length; i++) {
+                    var tempObjPosition ={
+                        employeeId:"",
+                        updateTimeArray:[],
+                        longitudeArray:[],
+                        latitudeArray:[],
+                        workStatusArray:[],
+                        kind:""
+                    }
+                    tempObjPosition.employeeId=data['data'][i]['employeeId'];
+
+                    tempObjPosition.updateTimeArray=new Array();
+                    tempObjPosition.longitudeArray=new Array();
+                    tempObjPosition.latitudeArray=new Array();
+                    tempObjPosition.workStatusTimeArray=new Array();
+
+                    tempObjPosition.updateTimeArray[0]=(data['data'][i]['updateTime']);
+                    tempObjPosition.longitudeArray[0]=(data['data'][i]['longitude']);
+                    tempObjPosition.latitudeArray[0]=(data['data'][i]['latitude']);
+                    tempObjPosition.workStatusTimeArray[0]=(data['data'][i]['workStatus']);
+                    tempObjPosition.kind=data['data'][i]['kind'];
+                    objPositionArray.push(tempObjPosition)
+                }
+            }else{
+                for (var i = 0; i < data['data'].length; i++) {
+                    for(var j=0;j<objPositionArray.length;j++)
+                    {
+                        if(objPositionArray[j].employeeId==data['data'][i]['employeeId']) {
+                            objPositionArray[j].updateTimeArray.push(data['data'][i]['updateTime']);
+                            objPositionArray[j].longitudeArray.push(data['data'][i]['longitude']);
+                            objPositionArray[j].latitudeArray.push(data['data'][i]['latitude']);
+                            objPositionArray[j].workStatusTimeArray.push(data['data'][i]['workStatus']);
+                            break;
+                        }
+                    }
+                }
+            }
     });
     $.ajaxSettings.async = true;
 }
@@ -437,9 +477,9 @@ function getBin(employeeId) {
     $.ajaxSettings.async = true;
     return result;
 }
-function updateAll() {
-    map.clearOverlays();
-    updateMap();
+
+
+function updateTables() {
     updateCarsTable();
     updatePersonsTable();
     updateBinsTable()
@@ -503,10 +543,7 @@ function showTrace(employeeId) {
     });
     $.ajaxSettings.async = true;
     // map.clearOverlays();
-    console.log(storeLongitudeArray)
     var temp=uniquePositions(storeLongitudeArray,storeLatitudeArray)
-    console.log(temp[0])
-    console.log(temp[1])
     if(temp[0].length==0)
     {
         alert("无轨迹资料")
@@ -519,7 +556,6 @@ function showTrace(employeeId) {
     }
     //执行方法
     cnt = 0;
-    console.log(arrPoints[0])
     var startMkr = new BMap.Marker(arrPoints[0]);
     map.addOverlay(startMkr); //标点
     var endMkr=new BMap.Marker(arrPoints[arrPoints.length-1])
@@ -550,9 +586,6 @@ function showTrace(employeeId) {
         fontSize: "5px"
     }); //对label 样式隐藏
     endMkr.setLabel(startlabel); //把label设置到maker上
-
-
-
     points = [];
     dynamicLine()
     // chance=setInterval(goNext,500);

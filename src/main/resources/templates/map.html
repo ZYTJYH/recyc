@@ -82,8 +82,10 @@
 <script src="/js/map.js"></script>
 <script type="text/javascript">
     initMap()
-    updateAll();
-    setInterval("updateAll()",60000);
+    updateTables();
+    updateMap();
+    setInterval("updateMap()",10000)
+    setInterval("updateTables()",60000);
 </script>
 </html>
 
